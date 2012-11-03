@@ -28,7 +28,7 @@ trait MenuElement {
    * The icon of the element, described as a number of [[com.siigna.app.model.shape.Shape]]s.
    * @return  A number of [[com.siigna.app.model.shape.Shape]]s.
    */
-  def icon : Iterable[Shape]
+  def icon : Traversable[Shape]
 }
 
 /**
@@ -76,4 +76,4 @@ trait MenuCategory extends MenuElement {
  * @param instance  The instance to start from the [[com.siigna.module.base.Menu]]
  * @param icon  The icon to draw in the [[com.siigna.module.base.Menu]]
  */
-case class MenuModule(instance: ModuleInstance, icon: Iterable[Shape]) extends MenuElement
+case class MenuModule(instance: ModuleInstance, icon: Traversable[Shape]) extends MenuElement

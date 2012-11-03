@@ -127,7 +127,7 @@ object Menu {
   // A simple dummy category
   protected val DummyCategory = new MenuCategory {
     val color = Color.white
-    val graph = Map()
+    val graph = Map[MenuEvent, MenuElement]()
     val parent = None
   }
 

@@ -21,10 +21,9 @@ import com.siigna.util.geom.Vector2D
  * Every menu event contains an icon and a Vector2D, used to draw the icon in the
  * right direction.
  */
-trait MenuEvent extends Event
-{
-  val icon   : Iterable[Shape]
-  val vector : Vector2D
+trait MenuEvent extends Event {
+  def icon   : Traversable[Shape]
+  def vector : Vector2D
 }
 
 case object EventC extends MenuEvent {

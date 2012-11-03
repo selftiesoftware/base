@@ -1,4 +1,4 @@
-name := "base modules"
+name := "siigna-base"
 
 version := "nightly"
 
