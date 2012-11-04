@@ -56,7 +56,6 @@ class Menu extends Module {
           if (module.isDefined) {
             println("Sender om lidt END(module)")
             End(module.get)
-            println("END(module) sendt")
           }
         }
       }
