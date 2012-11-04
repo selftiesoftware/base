@@ -53,7 +53,11 @@ class Menu extends Module {
               module = Some(instance)
             }
           })
-          if (module.isDefined) End(module.get)
+          if (module.isDefined) {
+            println("Sender om lidt END(module)")
+            End(module.get)
+            println("END(module) sendt")
+          }
         }
       }
     }
@@ -100,18 +104,18 @@ class Menu extends Module {
     // First re-fit the angle to a positive y-axis (as opposed to the device coordinate system
     // that has a negative y-axis)
     val angle  = Vector2D(point.x - View.center.x, View.center.y - point.y).angle
-    if      (angle => 345 || angle < 15)   EventE
-    else if (angle => 15  && angle < 45)   EventENE
-    else if (angle => 45  && angle < 75)   EventNNE
-    else if (angle => 75  && angle < 105)  EventN
-    else if (angle => 105 && angle < 135)  EventNNW
-    else if (angle => 135 && angle < 165)  EventWNW
-    else if (angle => 165 && angle < 195)  EventW
-    else if (angle => 195 && angle < 225)  EventWSW
-    else if (angle => 225 && angle < 255)  EventSSW
-    else if (angle => 255 && angle < 285)  EventS
-    else if (angle => 285 && angle < 315)  EventSSE
-    else if (angle => 315 && angle < 345)  EventESE
+    if      (angle >= 345 || angle < 15)   EventE
+    else if (angle >= 15  && angle < 45)   EventENE
+    else if (angle >= 45  && angle < 75)   EventNNE
+    else if (angle >= 75  && angle < 105)  EventN
+    else if (angle >= 105 && angle < 135)  EventNNW
+    else if (angle >= 135 && angle < 165)  EventWNW
+    else if (angle >= 165 && angle < 195)  EventW
+    else if (angle >= 195 && angle < 225)  EventWSW
+    else if (angle >= 225 && angle < 255)  EventSSW
+    else if (angle >= 255 && angle < 285)  EventS
+    else if (angle >= 285 && angle < 315)  EventSSE
+    else if (angle >= 315 && angle < 345)  EventESE
     else                                  MenuEventNone
   }
 }
