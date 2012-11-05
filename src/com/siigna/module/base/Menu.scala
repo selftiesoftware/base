@@ -50,7 +50,7 @@ class Menu extends Module {
             case mc: MenuCategory => currentCategory = mc
 
             case MenuModule(instance, icon) =>  {
-              module = Some(instance)
+              module = Some(instance.copy)
             }
           })
           if (module.isDefined) {
