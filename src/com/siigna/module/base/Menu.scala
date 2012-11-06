@@ -55,8 +55,13 @@ class Menu extends Module {
           })
           if (module.isDefined) {
             println("Sender om lidt END(module)")
+            println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
+            // if a shape is drawn, and you afterwards zoom very far out  - can be deletet afterwards
             End(module.get)
           }
+        } else {                                                   //Added to help bugfix; can be deletet afterwards
+        println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
+        println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
         }
       }
     }
