@@ -90,10 +90,20 @@ class Menu extends Module {
       }
     }
 
-    //a function to draw OUTLINES around each of the four categories N-E-S-W, if they are active.
+    //a function to draw TEXT inside and OUTLINES around each of the four categories N-E-S-W.
+    //TODO: does not work in subcategories without clickable Event.
+
     def drawCategory(event: MenuEvent) {
-      val t = location concatenate TransformationMatrix(event.vector * 130, 1)
       val position = Vector2D(View.center.x -18,View.center.y -4)
+      def drawFill (fillShape: Array[Vector2D], color : Color, placement: TransformationMatrix, rotation : Int) {
+      val fillVector2Ds = fillShape.map(_.transform(transformation.rotate(rotation)))
+      val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
+      val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
+
+        g setColor color
+        g.g.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
+      }
+
       // Draw the outlines - if the event is the Center draw nothing
       event match {
         //TODO: the C outline is not drawn in sub categories. Maybe a goto start category is not defined yet??
@@ -104,21 +114,22 @@ class Menu extends Module {
         case EventN => {
           g.draw(TextShape("Create",position - (event.vector * 130),10))
           MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
+          drawFill(MenuIcons.EventFill, MenuIcons.createColor, location, 360)
         }
         case EventE => {
           g.draw(TextShape("Properties",position - (event.vector * 130),8))
-
           MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
+          drawFill(MenuIcons.EventFill, MenuIcons.propertiesColor, location, 90)
         }
         case EventS => {
           g.draw(TextShape("Modify",position - (event.vector * 130),10))
-
           MenuIcons.SOutline.foreach(s => g.draw(s.transform(location)))
+          drawFill(MenuIcons.EventFill, MenuIcons.modifyColor, location, 180)
         }
         case EventW => {
           g.draw(TextShape("Helpers",position - (event.vector * 130),8))
-
           MenuIcons.WOutline.foreach(s => g.draw(s.transform(location)))
+          drawFill(MenuIcons.EventFill, MenuIcons.helpersColor, location, 270)
         }
         case _ =>
       }
