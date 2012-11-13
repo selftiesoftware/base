@@ -90,8 +90,8 @@ class Menu extends Module {
       }
     }
 
-    //a function to draw TEXT inside and OUTLINES around each of the four categories N-E-S-W.
-    //TODO: does not work in subcategories without clickable Event.
+    //a function to draw TEXT and a white FILL inside and OUTLINES around, each of the four categories N-E-S-W.
+    //TODO: outlines and fills are not shown in subcategories without clickable Event.
 
     def drawCategory(event: MenuEvent) {
       val position = Vector2D(View.center.x -18,View.center.y -4)
@@ -117,7 +117,7 @@ class Menu extends Module {
           drawFill(MenuIcons.EventFill, MenuIcons.createColor, location, 360)
         }
         case EventE => {
-          g.draw(TextShape("Properties",position - (event.vector * 130),8))
+          g.draw(TextShape("Properties",position - (event.vector * 130),6))
           MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
           drawFill(MenuIcons.EventFill, MenuIcons.propertiesColor, location, 90)
         }
