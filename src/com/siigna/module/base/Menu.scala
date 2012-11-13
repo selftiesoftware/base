@@ -67,29 +67,42 @@ class Menu extends Module {
 
     val location = TransformationMatrix(View.center, 1).flipY
 
+    //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
-
       val t = location concatenate TransformationMatrix(event.vector * 130, 1)
-
-     /* event.icon.foreach(s => {
-
-        g.draw(s)
-
-      })   */
-
       // Draw the icons - if the event is the Center we should only transform to the location
       event match {
         case EventC => element.icon.foreach(s => g.draw(s.transform(location)))
-        case _ => element.icon.foreach(s => g.draw(s.transform(t)))
+        case _ => {
+          //draw an outline/background color around each drawing tool
+          event.icon.foreach(s => g.draw(s.transform(t)))
+          //draw the icons
+          element.icon.foreach(s => g.draw(s.transform(t)))
+        }
       }
     }
 
+    //a function to draw OUTLINES around each of the four categories N-E-S-W, if they are active.
+    def drawCategory(event: MenuEvent) {
+      // Draw the outlines - if the event is the Center draw nothing
+      event match {
+        case EventC =>
+        case EventN => MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
+        case EventE => MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
+        case EventS => MenuIcons.SOutline.foreach(s => g.draw(s.transform(location)))
+        case EventW => MenuIcons.WOutline.foreach(s => g.draw(s.transform(location)))
+        case _ =>
+      }
+    }
+
+    //run the drawElement and drawCategory function on the currently active category:
     currentCategory.graph.foreach(t => {
       drawElement(t._1,t._2)
+      drawCategory(t._1)
     })
 
-    //g.draw(TextShape("3efscdsfdsfdsfds",View.center))
-   // g.draw(currentCategory.icon)
+    g.draw(TextShape("FILE",View.center))
+    //g.draw(currentCategory.icon)
   }
 
   /**
