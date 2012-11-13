@@ -84,7 +84,6 @@ class Menu extends Module {
 
     //a function to draw OUTLINES around each of the four categories N-E-S-W, if they are active.
     def drawCategory(event: MenuEvent) {
-
       // Draw the outlines - if the event is the Center draw nothing
       event match {
         case EventC =>
