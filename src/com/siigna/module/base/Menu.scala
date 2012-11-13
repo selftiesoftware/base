@@ -92,26 +92,42 @@ class Menu extends Module {
 
     //a function to draw OUTLINES around each of the four categories N-E-S-W, if they are active.
     def drawCategory(event: MenuEvent) {
+      val t = location concatenate TransformationMatrix(event.vector * 130, 1)
+      val position = Vector2D(View.center.x -18,View.center.y -4)
       // Draw the outlines - if the event is the Center draw nothing
       event match {
         //TODO: the C outline is not drawn in sub categories. Maybe a goto start category is not defined yet??
-        case EventC => MenuIcons.C.foreach(s => g.draw(s.transform(location)))
-        case EventN => MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
-        case EventE => MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
-        case EventS => MenuIcons.SOutline.foreach(s => g.draw(s.transform(location)))
-        case EventW => MenuIcons.WOutline.foreach(s => g.draw(s.transform(location)))
+        case EventC => {
+          g.draw(TextShape("File",position,10))
+          MenuIcons.C.foreach(s => g.draw(s.transform(location)))
+        }
+        case EventN => {
+          g.draw(TextShape("Create",position - (event.vector * 130),10))
+          MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
+        }
+        case EventE => {
+          g.draw(TextShape("Properties",position - (event.vector * 130),8))
+
+          MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
+        }
+        case EventS => {
+          g.draw(TextShape("Modify",position - (event.vector * 130),10))
+
+          MenuIcons.SOutline.foreach(s => g.draw(s.transform(location)))
+        }
+        case EventW => {
+          g.draw(TextShape("Helpers",position - (event.vector * 130),8))
+
+          MenuIcons.WOutline.foreach(s => g.draw(s.transform(location)))
+        }
         case _ =>
       }
     }
-
     //run the drawElement and drawCategory function on the currently active category:
     currentCategory.graph.foreach(t => {
       drawElement(t._1,t._2)
       drawCategory(t._1)
     })
-
-    g.draw(TextShape("FILE",View.center))
-    //g.draw(currentCategory.icon)
   }
 
   /**
