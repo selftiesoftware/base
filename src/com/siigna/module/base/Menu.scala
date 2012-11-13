@@ -86,7 +86,8 @@ class Menu extends Module {
     def drawCategory(event: MenuEvent) {
       // Draw the outlines - if the event is the Center draw nothing
       event match {
-        case EventC =>
+        //TODO: the C outline is not drawn in sub categories. Maybe a goto start category is not defined yet??
+        case EventC => MenuIcons.C.foreach(s => g.draw(s.transform(location)))
         case EventN => MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
         case EventE => MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
         case EventS => MenuIcons.SOutline.foreach(s => g.draw(s.transform(location)))
