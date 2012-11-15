@@ -32,11 +32,13 @@ class Menu extends Module {
     'Start -> {
       case e => {
         currentCategory = Menu.startCategory
+        Siigna.navigation = false
         'Interaction
       }
     },
     'Interaction -> {
       case MouseDown(_, MouseButtonRight, _) :: tail => {
+        Siigna.navigation = true
         End
       }
       case MouseDown(p,_,_) :: tail => {
@@ -56,7 +58,8 @@ class Menu extends Module {
           if (module.isDefined) {
             println("Sender om lidt END(module)")
             println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
-            // if a shape is drawn, and you afterwards zoom very far out  - can be deletet afterwards
+            // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
+            Siigna.navigation = true
             End(module.get)
           }
         } else {                                                   //Added to help bugfix; can be deletet afterwards
@@ -94,15 +97,15 @@ class Menu extends Module {
     //TODO: outlines and fills are not shown in subcategories without clickable Event.
 
     def drawCategory(event: MenuEvent) {
-      val position = Vector2D(View.center.x -18,View.center.y -4)
       def drawFill (fillShape: Array[Vector2D], color : Color, placement: TransformationMatrix, rotation : Int) {
-      val fillVector2Ds = fillShape.map(_.transform(transformation.rotate(rotation)))
-      val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
-      val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
-
+        //val formattedVectors = Array(fillShape.foreach(s => s.transform(View.drawingTransformation)))
+        val fillVector2Ds = fillShape.map(_.transform(location.rotate(rotation)))
+        val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
+        val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
         g setColor color
         g.g.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
       }
+      val position = Vector2D(View.center.x -18,View.center.y -4)
 
       // Draw the outlines - if the event is the Center draw nothing
       event match {
@@ -113,6 +116,7 @@ class Menu extends Module {
         }
         case EventN => {
           g.draw(TextShape("Create",position - (event.vector * 130),10))
+          println("location: "+location)
           MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
           drawFill(MenuIcons.EventFill, MenuIcons.createColor, location, 360)
         }
