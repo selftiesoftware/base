@@ -78,87 +78,85 @@ class Menu extends Module {
 
     val location = TransformationMatrix(View.center, 1).flipY
 
+    def drawFill (fillShape: Array[Vector2D], color : Color, transformation : TransformationMatrix) {
+      val fillVector2Ds = fillShape.map(_.transform(transformation))
+      val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
+      val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
+      g setColor color
+      g.g.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
+    }
+
+    def drawBackground(event : MenuEvent) {
+    //draw the background colors)
+      event match {
+        case EventN =>  drawFill(MenuIcons.CategoryFill, MenuIcons.createColor, location.rotate(360))
+        case EventE =>  drawFill(MenuIcons.CategoryFill, MenuIcons.propertiesColor, location.rotate(90))
+        case EventS =>  drawFill(MenuIcons.CategoryFill, MenuIcons.modifyColor, location.rotate(180))
+        case EventW =>  drawFill(MenuIcons.CategoryFill, MenuIcons.helpersColor, location.rotate(270))
+        case _ =>
+      }
+    }
+    currentCategory.graph.foreach(t => {
+      drawBackground(t._1)
+    })
+
     //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
+
+      val position = Vector2D(View.center.x -18,View.center.y -4)
       val t = location concatenate TransformationMatrix(event.vector * 130, 1)
-
-      //function to draw backgrounds
-      def fillIcons(vectors : Array[Vector2D], transformation : TransformationMatrix) {
-        val fillVector2Ds = vectors.map(_.transform(transformation))
-        val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
-        val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
-
-        g.g.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
-      }
-      g setColor MenuIcons.iconFillColor
 
       // Draw the icons - if the event is the Center we should only transform to the location
       event match {
         case EventC => element.icon.foreach(s => g.draw(s.transform(location)))
+        case EventN => {
+          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
+        }
+        case EventE => {
+          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
+        }
+        case EventS => {
+          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          MenuIcons.SOutline.foreach(s => g.draw(s.transform(location)))
+        }
+        case EventW => {
+          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          MenuIcons.WOutline.foreach(s => g.draw(s.transform(location)))
+        }
         case _ => {
-          event.icon.foreach(s => {
-            //TODO: the rotation /placement of N,E,S,W events is wrong?? needs the addition of Vector2D(0,130)
-            if(event == EventN || event == EventE || event == EventS || event == EventW) {
-              fillIcons(MenuIcons.EventIconFill, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
-            }
-              else fillIcons(MenuIcons.IconFill, t.rotate(event.rotation+30)) //30 deg. add needed because of icon graphics misalignment.
-          })
-          //draw an outline/background color around each drawing tool
-          event.icon.foreach(s => g.draw(s.transform(t)))
+          //draw a fill background for the icons
+          drawFill(MenuIcons.IconFill, MenuIcons.itemColor, t.rotate(event.rotation+30)) //30 deg. add needed because of icon graphics misalignment.
           //draw the icons
           element.icon.foreach(s => g.draw(s.transform(t)))
+          //draw an outline/background color around each drawing tool
+          event.icon.foreach(s => g.draw(s.transform(t)))
         }
       }
     }
+    //run the drawElement function on the currently active category:
+    currentCategory.graph.foreach(t => {
+      drawElement(t._1,t._2)
+    })
 
-    //a function to draw TEXT and a white FILL inside and OUTLINES around, each of the four categories N-E-S-W.
-    //TODO: outlines and fills are not shown in subcategories without clickable Event.
-
-    def drawCategory(event: MenuEvent) {
-      def drawFill (fillShape: Array[Vector2D], color : Color, rotation : Int) {
-        //val formattedVectors = Array(fillShape.foreach(s => s.transform(View.drawingTransformation)))
-        val fillVector2Ds = fillShape.map(_.transform(location.rotate(rotation)))
-        val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
-        val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
-        g setColor color
-        g.g.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
-      }
+    //Function to draw text in icons and as guides.
+    def drawText(event : MenuEvent) {
       val position = Vector2D(View.center.x -18,View.center.y -4)
-
-      // Draw the outlines - if the event is the Center draw nothing
+      def eventText(text : String, size : Int) {
+        g.draw(TextShape(text,position - (event.vector * 130),size))
+      }
       event match {
-        //TODO: the C outline is not drawn in sub categories. Maybe a goto start category is not defined yet??
-        case EventC => {
-          g.draw(TextShape("File",position,10))
-          MenuIcons.C.foreach(s => g.draw(s.transform(location)))
-        }
-        case EventN => {
-          g.draw(TextShape("Create",position - (event.vector * 130),10))
-          MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
-          drawFill(MenuIcons.CategoryFill, MenuIcons.createColor, 360)
-        }
-        case EventE => {
-          g.draw(TextShape("Properties",position - (event.vector * 130),6))
-          MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
-          drawFill(MenuIcons.CategoryFill, MenuIcons.propertiesColor, 90)
-        }
-        case EventS => {
-          g.draw(TextShape("Modify",position - (event.vector * 130),10))
-          MenuIcons.SOutline.foreach(s => g.draw(s.transform(location)))
-          drawFill(MenuIcons.CategoryFill, MenuIcons.modifyColor, 180)
-        }
-        case EventW => {
-          g.draw(TextShape("Helpers",position - (event.vector * 130),8))
-          MenuIcons.WOutline.foreach(s => g.draw(s.transform(location)))
-          drawFill(MenuIcons.CategoryFill, MenuIcons.helpersColor, 270)
-        }
+        case EventN => eventText("Create",9)
+        case EventE => eventText("Properties",6)
+        case EventS => eventText("Modify",9)
+        case EventW => eventText("Helpers",6)
+        case EventC => eventText("File",6)
         case _ =>
       }
     }
-    //run the drawElement and drawCategory function on the currently active category:
     currentCategory.graph.foreach(t => {
-      drawElement(t._1,t._2)
-      drawCategory(t._1)
+      drawText(t._1)
     })
   }
 
