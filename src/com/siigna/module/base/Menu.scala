@@ -146,12 +146,28 @@ class Menu extends Module {
       def eventText(text : String, size : Int) {
         g.draw(TextShape(text,position - (event.vector * 130),size))
       }
+      def circleOutline(e : MenuEvent) = g.draw(CircleShape(View.center,26).transform(TransformationMatrix(- e.vector * 130, 1)))
+
       event match {
-        case EventN => eventText("Create",9)
-        case EventE => eventText("Properties",6)
-        case EventS => eventText("Modify",9)
-        case EventW => eventText("Helpers",6)
-        case EventC => eventText("File",6)
+        case EventN => {
+          circleOutline(event)
+          eventText("Create",9)
+        }
+        case EventE => {
+          circleOutline(event)
+          eventText("Properties",6)
+        }
+        case EventS => {
+          circleOutline(event)
+          eventText("Modify",9)
+        }
+        case EventW => {
+          circleOutline(event)
+          eventText("Helpers",8)
+        }
+        case EventC => {
+          eventText("File",6)
+        }
         case _ =>
       }
     }
