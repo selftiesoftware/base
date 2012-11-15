@@ -13,7 +13,7 @@ package com.siigna.module.base
 
 import com.siigna._
 import com.siigna.module.base.radialmenu._
-import java.awt.Color
+import java.awt.{Shape, Color}
 
 /**
  * The menu module.
@@ -56,15 +56,15 @@ class Menu extends Module {
             }
           })
           if (module.isDefined) {
-            println("Sender om lidt END(module)")
-            println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
+            //println("Sender om lidt END(module)")
+            //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
             // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
             Siigna.navigation = true
             End(module.get)
           }
         } else {                                                   //Added to help bugfix; can be deletet afterwards
-        println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
-        println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
+        //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
+        //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
         }
       }
     }
@@ -81,10 +81,28 @@ class Menu extends Module {
     //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
       val t = location concatenate TransformationMatrix(event.vector * 130, 1)
+
+      //function to draw backgrounds
+      def fillIcons(vectors : Array[Vector2D], transformation : TransformationMatrix) {
+        val fillVector2Ds = vectors.map(_.transform(transformation))
+        val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
+        val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
+
+        g.g.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
+      }
+      g setColor MenuIcons.iconFillColor
+
       // Draw the icons - if the event is the Center we should only transform to the location
       event match {
         case EventC => element.icon.foreach(s => g.draw(s.transform(location)))
         case _ => {
+          event.icon.foreach(s => {
+            //TODO: the rotation /placement of N,E,S,W events is wrong?? needs the addition of Vector2D(0,130)
+            if(event == EventN || event == EventE || event == EventS || event == EventW) {
+              fillIcons(MenuIcons.EventIconFill, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+            }
+              else fillIcons(MenuIcons.IconFill, t.rotate(event.rotation+30)) //30 deg. add needed because of icon graphics misalignment.
+          })
           //draw an outline/background color around each drawing tool
           event.icon.foreach(s => g.draw(s.transform(t)))
           //draw the icons
@@ -97,7 +115,7 @@ class Menu extends Module {
     //TODO: outlines and fills are not shown in subcategories without clickable Event.
 
     def drawCategory(event: MenuEvent) {
-      def drawFill (fillShape: Array[Vector2D], color : Color, placement: TransformationMatrix, rotation : Int) {
+      def drawFill (fillShape: Array[Vector2D], color : Color, rotation : Int) {
         //val formattedVectors = Array(fillShape.foreach(s => s.transform(View.drawingTransformation)))
         val fillVector2Ds = fillShape.map(_.transform(location.rotate(rotation)))
         val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
@@ -116,24 +134,23 @@ class Menu extends Module {
         }
         case EventN => {
           g.draw(TextShape("Create",position - (event.vector * 130),10))
-          println("location: "+location)
           MenuIcons.NOutline.foreach(s => g.draw(s.transform(location)))
-          drawFill(MenuIcons.EventFill, MenuIcons.createColor, location, 360)
+          drawFill(MenuIcons.CategoryFill, MenuIcons.createColor, 360)
         }
         case EventE => {
           g.draw(TextShape("Properties",position - (event.vector * 130),6))
           MenuIcons.EOutline.foreach(s => g.draw(s.transform(location)))
-          drawFill(MenuIcons.EventFill, MenuIcons.propertiesColor, location, 90)
+          drawFill(MenuIcons.CategoryFill, MenuIcons.propertiesColor, 90)
         }
         case EventS => {
           g.draw(TextShape("Modify",position - (event.vector * 130),10))
           MenuIcons.SOutline.foreach(s => g.draw(s.transform(location)))
-          drawFill(MenuIcons.EventFill, MenuIcons.modifyColor, location, 180)
+          drawFill(MenuIcons.CategoryFill, MenuIcons.modifyColor, 180)
         }
         case EventW => {
           g.draw(TextShape("Helpers",position - (event.vector * 130),8))
           MenuIcons.WOutline.foreach(s => g.draw(s.transform(location)))
-          drawFill(MenuIcons.EventFill, MenuIcons.helpersColor, location, 270)
+          drawFill(MenuIcons.CategoryFill, MenuIcons.helpersColor, 270)
         }
         case _ =>
       }
