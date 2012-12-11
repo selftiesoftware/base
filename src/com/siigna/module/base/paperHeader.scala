@@ -18,7 +18,7 @@ import java.awt.Color
  * shapes that make up the drawing header, used in module-init and export.
  */
 
-object paperHeader {
+class paperHeader {
   def unitX(times : Int) = Vector2D(times * Siigna.paperScale, 0)
   val boundary = Drawing.boundary // Get the boundary
   val br = boundary.bottomRight
