@@ -13,8 +13,7 @@ package com.siigna.module.base
 
 import com.siigna._
 import com.siigna.module.base.radialmenu._
-import java.awt.Color
-import com.siigna.app.view.Graphics
+import java.awt.{Shape, Color}
 
 /**
  * The menu module.
@@ -46,7 +45,7 @@ class Menu extends Module {
 
         // Examine if we have a hit!
         if ((View.center.distanceTo(p) > 100 && View.center.distanceTo(p) < 150) || // The icons on the radius
-            (View.center.distanceTo(p) < 30)) { // Center-category
+          (View.center.distanceTo(p) < 30)) { // Center-category
 
           var module: Option[ModuleInstance] = None
           currentCategory.graph.get(direction(p)) foreach(_ match {
@@ -64,8 +63,8 @@ class Menu extends Module {
             End(module.get)
           }
         } else {                                                   //Added to help bugfix; can be deletet afterwards
-        //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
-        //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
+          //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
+          //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
         }
       }
     }
@@ -79,6 +78,8 @@ class Menu extends Module {
 
     val location = TransformationMatrix(View.center, 1).flipY
 
+    val colorAttr = "Color" -> new Color(150, 150, 150)
+
     def drawFill (fillShape: Array[Vector2D], color : Color, transformation : TransformationMatrix) {
       val fillVector2Ds = fillShape.map(_.transform(transformation))
       val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
@@ -88,7 +89,7 @@ class Menu extends Module {
     }
 
     def drawBackground(event : MenuEvent) {
-    //draw the background colors)
+      //draw the background colors)
       event match {
         case EventN =>  drawFill(MenuIcons.CategoryFill, MenuIcons.createColor, location.rotate(360))
         case EventE =>  drawFill(MenuIcons.CategoryFill, MenuIcons.propertiesColor, location.rotate(90))
@@ -104,7 +105,6 @@ class Menu extends Module {
     //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
 
-      val s = "StrokeWidth" -> 0.15
       val t = location concatenate TransformationMatrix(event.vector * 130, 1)
 
       // Draw the icons - if the event is the Center we should only transform to the location
@@ -112,19 +112,19 @@ class Menu extends Module {
         case EventC => element.icon.foreach(s => g.draw(s.transform(location)))
         case EventN => {
           drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
-          MenuIcons.NOutline.foreach(s => g.draw(s.addAttribute("StrokeWidth" -> 0.15).transform(location)))
+          MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventE => {
           drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
-          MenuIcons.EOutline.foreach(s => g.draw(s.addAttribute("StrokeWidth" -> 0.15).transform(location)))
+          MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventS => {
           drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
-          MenuIcons.SOutline.foreach(s => g.draw(s.addAttribute("StrokeWidth" -> 0.15).transform(location)))
+          MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventW => {
-          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
-          MenuIcons.WOutline.foreach(s => g.draw(s.addAttribute("StrokeWidth" -> 0.15).transform(location)))
+          //drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case _ => {
           //draw a fill background for the icons
@@ -132,7 +132,7 @@ class Menu extends Module {
           //draw the icons
           element.icon.foreach(s => g.draw(s.transform(t)))
           //draw an outline/background color around each drawing tool
-          event.icon.foreach(s => g.draw(s.addAttribute("StrokeWidth" -> 0.45)transform(t)))
+          event.icon.foreach(s => g.draw(s.transform(t).addAttributes(colorAttr)))
         }
       }
     }
@@ -147,7 +147,7 @@ class Menu extends Module {
       def eventText(text : String, size : Int) {
         g.draw(TextShape(text,position - (event.vector * 130),size))
       }
-      def circleOutline(e : MenuEvent) = g.draw(CircleShape(View.center,26).addAttribute("StrokeWidth" -> 0.7).transform(TransformationMatrix(- e.vector * 130, 1)))
+      def circleOutline(e : MenuEvent) = g.draw(CircleShape(View.center,26).transform(TransformationMatrix(- e.vector * 130, 1)).addAttributes(colorAttr))
 
       event match {
         case EventN => {
@@ -172,6 +172,7 @@ class Menu extends Module {
         case _ =>
       }
     }
+
     currentCategory.graph.foreach(t => {
       drawText(t._1)
     })
