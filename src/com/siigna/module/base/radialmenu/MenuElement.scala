@@ -78,7 +78,7 @@ trait MenuCategory extends MenuElement {
  */
 class MenuModule(module : => Option[Module], val icon : Traversable[Shape]) extends MenuElement {
   override def equals(that : Any) = that.isInstanceOf[MenuModule] &&
-    instance.get.getClass == that.asInstanceOf[MenuModule].instance.get.getClass &&
+    instance == that.asInstanceOf[MenuModule].instance &&
     icon == that.asInstanceOf[MenuModule].icon
 
   def instance = module
