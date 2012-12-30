@@ -25,6 +25,9 @@ import java.awt.{Shape, Color}
 class Menu extends Module {
 
   var center: Option[Vector2D] = None
+  var module: Option[Module] = None
+
+  private var activeCategory : Option[MenuCategory] = None
 
   protected var currentCategory : MenuCategory = Menu.DummyCategory
 
@@ -41,19 +44,18 @@ class Menu extends Module {
         Siigna.navigation = true
         End
       }
-      case MouseDown(p,_,_) :: tail => {
-        println("view dist to p: "+View.center.distanceTo(p))
+      case MouseMove(p,_,_) :: tail => {
         // Examine if we have a hit!
         if ((View.center.distanceTo(p) > 100 && View.center.distanceTo(p) < 150) || // The icons on the radius
           (View.center.distanceTo(p) < 30)) { // Center-category
 
-          var module: Option[Module] = None
-          //if N E S or W is clicked
+          //if N E S or W is active
           if(View.center.distanceTo(p) > 100) {
             currentCategory.graph.get(direction(p)) foreach(_ match {
               case mc: MenuCategory => {
                 
-                currentCategory = mc
+                activeCategory = Some(mc)
+                println(activeCategory)
               }
 
               case MenuModule(instance, icon) =>  {
@@ -61,27 +63,30 @@ class Menu extends Module {
               }
             })
           }
-          //if C is clicked
-          else if(View.center.distanceTo(p) < 30) {
+          //if C is active
+          else if(View.center.distanceTo(p) < 30 && activeCategory.isDefined) {
             currentCategory.graph.get(EventC) foreach(_ match {
-              case mc: MenuCategory => currentCategory = mc
-              println(mc.graph.head._1.rotation)
+              case mc: MenuCategory => activeCategory = Some(mc)
               case MenuModule(instance, icon) =>  {
                 module = instance
               }
             })
           }
+        }
+      }
+      case MouseDown(p,_,_) :: tail => {
 
-          if (module.isDefined) {
-            //println("Sender om lidt END(module)")
-            //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
-            // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
-            Siigna.navigation = true
-            End(module.get)
-          }
-        } else {                                                   //Added to help bugfix; can be deletet afterwards
-          //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
-          //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
+      if (activeCategory.isDefined) {
+        //println("Sender om lidt END(module)")
+        //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
+        // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
+        currentCategory = activeCategory.get
+        Siigna.navigation = true
+        if(module.isDefined) End(module.get)
+
+      } else {                                                   //Added to help bugfix; can be deletet afterwards
+        //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
+        //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
         }
       }
     }
@@ -92,30 +97,8 @@ class Menu extends Module {
    * of the icons, origining from the center.
    */
   override def paint(g : Graphics, transformation : TransformationMatrix) {
-    var m = mousePosition
     val location = TransformationMatrix(View.center, 1).flipY
     val colorAttr = "Color" -> new Color(150, 150, 150)
-
-    if ((View.center.distanceTo(m) > 100 && View.center.distanceTo(mousePosition) < 150) || // The icons on the radius
-      (View.center.distanceTo(m) < 30)) { // Center-category
-      //var module: Option[ModuleInstance] = None
-      //if N E S or W is clicked
-      if(View.center.distanceTo(m) > 100) {
-        currentCategory.graph.get(direction(m)) foreach(_ match {
-          case mc: MenuCategory => {
-           println("MC: "+mc)
-           g draw LineShape(View.center + mc.graph.head._1.vector * 130  - Vector2D(0,130),m)
-           //drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(mc.graph.head._1.vector * 130 - Vector2D(0,130), 1))
-          }
-
-          case MenuModule(instance, icon) =>  {
-            println("ICON")
-          }
-        })
-      }
-    }
-    
-
 
     def drawFill (fillShape: Array[Vector2D], color : Color, transformation : TransformationMatrix) {
       val fillVector2Ds = fillShape.map(_.transform(transformation))
