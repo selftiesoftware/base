@@ -31,7 +31,7 @@ case object EventC extends MenuEvent {
   lazy val rotation = 0
   lazy val icon   = MenuIcons.C
   lazy val symbol = 'C
-  lazy val vector = Vector2D(0, 0).unit
+  lazy val vector = Vector2D(0, 0)
 }
 case object EventE extends MenuEvent {
   lazy val rotation = 0
