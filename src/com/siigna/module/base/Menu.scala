@@ -182,7 +182,7 @@ class Menu extends Module {
           eventText("Helpers",8)
         }
         case EventC => {
-          eventText("File",9)
+          eventText("File",12)
         }
         case _ =>
       }
