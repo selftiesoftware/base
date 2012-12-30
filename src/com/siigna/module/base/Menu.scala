@@ -42,19 +42,33 @@ class Menu extends Module {
         End
       }
       case MouseDown(p,_,_) :: tail => {
-
+        println("view dist to p: "+View.center.distanceTo(p))
         // Examine if we have a hit!
         if ((View.center.distanceTo(p) > 100 && View.center.distanceTo(p) < 150) || // The icons on the radius
           (View.center.distanceTo(p) < 30)) { // Center-category
 
           var module: Option[ModuleInstance] = None
-          currentCategory.graph.get(direction(p)) foreach(_ match {
-            case mc: MenuCategory => currentCategory = mc
+          //if N E S or W is clicked
+          if(View.center.distanceTo(p) > 100) {
+            currentCategory.graph.get(direction(p)) foreach(_ match {
+              case mc: MenuCategory => currentCategory = mc
 
-            case MenuModule(instance, icon) =>  {
-              module = Some(instance.copy)
-            }
-          })
+              case MenuModule(instance, icon) =>  {
+                module = Some(instance.copy)
+              }
+            })
+          }
+          //if C is clicked
+          else if(View.center.distanceTo(p) < 30) {
+            currentCategory.graph.get(EventC) foreach(_ match {
+              case mc: MenuCategory => currentCategory = mc
+
+              case MenuModule(instance, icon) =>  {
+                module = Some(instance.copy)
+              }
+            })
+          }
+
           if (module.isDefined) {
             //println("Sender om lidt END(module)")
             //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
@@ -95,6 +109,7 @@ class Menu extends Module {
         case EventE =>  drawFill(MenuIcons.CategoryFill, MenuIcons.propertiesColor, location.rotate(90))
         case EventS =>  drawFill(MenuIcons.CategoryFill, MenuIcons.modifyColor, location.rotate(180))
         case EventW =>  drawFill(MenuIcons.CategoryFill, MenuIcons.helpersColor, location.rotate(270))
+        case EventC =>  drawFill(MenuIcons.CategoryFill, MenuIcons.fileColor, location.rotate(0))
         case _ =>
       }
     }
@@ -167,7 +182,7 @@ class Menu extends Module {
           eventText("Helpers",8)
         }
         case EventC => {
-          eventText("File",6)
+          eventText("File",9)
         }
         case _ =>
       }
