@@ -12,7 +12,7 @@
 package com.siigna.module.base.radialmenu
 
 import com.siigna.app.model.shape.Shape
-import com.siigna.module.ModuleInstance
+import com.siigna.module.Module
 
 /**
  * An element inside the [[com.siigna.module.base.Menu]]. This can either be a
@@ -41,7 +41,7 @@ trait MenuElement {
  *   Map[Event -> Module]
  *
  *   // For example
- *   val graph = Map(EventN -> MenuModule(Module('Line), MenuIcons.line))
+ *   val graph = Map(EventN -> MenuModule(Module('cad, "Line"), MenuIcons.line))
  * }}}
  *
  * That would give a category that displays a nice icon at north (hopefully resembling a line), and that, when clicked
@@ -73,7 +73,22 @@ trait MenuCategory extends MenuElement {
 /**
  * A MenuItem is an item in the [[com.siigna.module.base.Menu]]. It contains an instance of a
  * [[com.siigna.module.Module]] which the menu can forward to, if it has been clicked.
- * @param instance  The instance to start from the [[com.siigna.module.base.Menu]]
+ * @param module  The instance to start from the [[com.siigna.module.base.Menu]], if any
  * @param icon  The icon to draw in the [[com.siigna.module.base.Menu]]
  */
-case class MenuModule(instance: ModuleInstance, icon: Traversable[Shape]) extends MenuElement
+class MenuModule(module : => Option[Module], val icon : Traversable[Shape]) extends MenuElement {
+  override def equals(that : Any) = that.isInstanceOf[MenuModule] &&
+    instance == that.asInstanceOf[MenuModule].instance && icon == that.asInstanceOf[MenuModule].icon
+  def instance = module
+}
+
+/**
+ * Companion object to the MenuModule class. This has created primarily to allow call-by-name parameter.
+ */
+object MenuModule {
+
+  def apply(module : => Option[Module], icon : Traversable[Shape]) = new MenuModule(module, icon)
+
+  def unapply(value : MenuModule) = Some(value.instance, value.icon)
+
+}

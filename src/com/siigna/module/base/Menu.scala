@@ -47,7 +47,7 @@ class Menu extends Module {
         if ((View.center.distanceTo(p) > 100 && View.center.distanceTo(p) < 150) || // The icons on the radius
           (View.center.distanceTo(p) < 30)) { // Center-category
 
-          var module: Option[ModuleInstance] = None
+          var module: Option[Module] = None
           //if N E S or W is clicked
           if(View.center.distanceTo(p) > 100) {
             currentCategory.graph.get(direction(p)) foreach(_ match {
@@ -57,7 +57,7 @@ class Menu extends Module {
               }
 
               case MenuModule(instance, icon) =>  {
-                module = Some(instance.copy)
+                module = instance
               }
             })
           }
@@ -67,7 +67,7 @@ class Menu extends Module {
               case mc: MenuCategory => currentCategory = mc
               println(mc.graph.head._1.rotation)
               case MenuModule(instance, icon) =>  {
-                module = Some(instance.copy)
+                module = instance
               }
             })
           }
