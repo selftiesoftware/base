@@ -53,12 +53,11 @@ class Menu extends Module {
           if(View.center.distanceTo(p) > 100) {
             currentCategory.graph.get(direction(p)) foreach(_ match {
               case mc: MenuCategory => {
-                
                 activeCategory = Some(mc)
-                //println(activeCategory)
               }
 
               case MenuModule(instance, icon) =>  {
+                activeCategory = Some(Menu.startCategory)
                 module = instance
               }
             })
@@ -72,7 +71,7 @@ class Menu extends Module {
               }
             })
           }
-        }
+        } else activeCategory = Some(Menu.startCategory)
       }
       case MouseDown(p,_,_) :: tail => {
         if (activeCategory.isDefined) {
