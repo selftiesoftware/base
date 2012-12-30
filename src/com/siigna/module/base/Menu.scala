@@ -98,14 +98,14 @@ class Menu extends Module {
 
     if ((View.center.distanceTo(m) > 100 && View.center.distanceTo(mousePosition) < 150) || // The icons on the radius
       (View.center.distanceTo(m) < 30)) { // Center-category
-      var module: Option[ModuleInstance] = None
+      //var module: Option[ModuleInstance] = None
       //if N E S or W is clicked
       if(View.center.distanceTo(m) > 100) {
         currentCategory.graph.get(direction(m)) foreach(_ match {
           case mc: MenuCategory => {
-           //println("MC:"+mc.graph)
-           //println(mc.graph.head._1.rotation)
-           drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(mc.graph.head._1.vector * 130 - Vector2D(0,130), 1))
+           println("MC: "+mc)
+           g draw LineShape(View.center + mc.graph.head._1.vector * 130  - Vector2D(0,130),m)
+           //drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(mc.graph.head._1.vector * 130 - Vector2D(0,130), 1))
           }
 
           case MenuModule(instance, icon) =>  {
