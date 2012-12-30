@@ -51,7 +51,10 @@ class Menu extends Module {
           //if N E S or W is clicked
           if(View.center.distanceTo(p) > 100) {
             currentCategory.graph.get(direction(p)) foreach(_ match {
-              case mc: MenuCategory => currentCategory = mc
+              case mc: MenuCategory => {
+                
+                currentCategory = mc
+              }
 
               case MenuModule(instance, icon) =>  {
                 module = Some(instance.copy)
@@ -62,7 +65,7 @@ class Menu extends Module {
           else if(View.center.distanceTo(p) < 30) {
             currentCategory.graph.get(EventC) foreach(_ match {
               case mc: MenuCategory => currentCategory = mc
-
+              println(mc.graph.head._1.rotation)
               case MenuModule(instance, icon) =>  {
                 module = Some(instance.copy)
               }
@@ -89,10 +92,30 @@ class Menu extends Module {
    * of the icons, origining from the center.
    */
   override def paint(g : Graphics, transformation : TransformationMatrix) {
-
+    var m = mousePosition
     val location = TransformationMatrix(View.center, 1).flipY
-
     val colorAttr = "Color" -> new Color(150, 150, 150)
+
+    if ((View.center.distanceTo(m) > 100 && View.center.distanceTo(mousePosition) < 150) || // The icons on the radius
+      (View.center.distanceTo(m) < 30)) { // Center-category
+      var module: Option[ModuleInstance] = None
+      //if N E S or W is clicked
+      if(View.center.distanceTo(m) > 100) {
+        currentCategory.graph.get(direction(m)) foreach(_ match {
+          case mc: MenuCategory => {
+           //println("MC:"+mc.graph)
+           //println(mc.graph.head._1.rotation)
+           drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(mc.graph.head._1.vector * 130 - Vector2D(0,130), 1))
+          }
+
+          case MenuModule(instance, icon) =>  {
+            println("ICON")
+          }
+        })
+      }
+    }
+    
+
 
     def drawFill (fillShape: Array[Vector2D], color : Color, transformation : TransformationMatrix) {
       val fillVector2Ds = fillShape.map(_.transform(transformation))
@@ -113,6 +136,20 @@ class Menu extends Module {
         case _ =>
       }
     }
+
+    def hightlightActive (event : MenuEvent) {
+      //draw the background colors)
+      event match {
+        case EventN =>  drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+        case EventE =>  drawFill(MenuIcons.CategoryFill, MenuIcons.propertiesColor, location.rotate(90))
+        case EventS =>  drawFill(MenuIcons.CategoryFill, MenuIcons.modifyColor, location.rotate(180))
+        case EventW =>  drawFill(MenuIcons.CategoryFill, MenuIcons.helpersColor, location.rotate(270))
+        case EventC =>  drawFill(MenuIcons.CategoryFill, MenuIcons.fileColor, location.rotate(0))
+        case _ =>
+      }
+    }
+
+
     currentCategory.graph.foreach(t => {
       drawBackground(t._1)
     })
@@ -138,7 +175,7 @@ class Menu extends Module {
           MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventW => {
-          //drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
           MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case _ => {
@@ -216,7 +253,6 @@ class Menu extends Module {
     else                                  MenuEventNone
   }
 }
-
 /**
  * An immutable object used for values associated with the [[com.siigna.module.base.Menu]]
  * [[com.siigna.module.Module]]. The most important part of this object is to define the
