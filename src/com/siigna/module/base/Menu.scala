@@ -27,7 +27,7 @@ class Menu extends Module {
   var center: Option[Vector2D] = None
   var module: Option[Module] = None
 
-  private var activeCategory : Option[MenuCategory] = None
+  private var activeCategory : Option[MenuCategory] = Some(Menu.startCategory)
 
   protected var currentCategory : MenuCategory = Menu.DummyCategory
 
@@ -55,7 +55,7 @@ class Menu extends Module {
               case mc: MenuCategory => {
                 
                 activeCategory = Some(mc)
-                println(activeCategory)
+                //println(activeCategory)
               }
 
               case MenuModule(instance, icon) =>  {
@@ -75,18 +75,17 @@ class Menu extends Module {
         }
       }
       case MouseDown(p,_,_) :: tail => {
-
-      if (activeCategory.isDefined) {
-        //println("Sender om lidt END(module)")
-        //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
-        // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
-        currentCategory = activeCategory.get
-        Siigna.navigation = true
-        if(module.isDefined) End(module.get)
-
-      } else {                                                   //Added to help bugfix; can be deletet afterwards
-        //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
-        //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
+        if (activeCategory.isDefined) {
+          //println("Sender om lidt END(module)")
+          //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
+          // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
+          currentCategory = activeCategory.get
+          Siigna.navigation = true
+          if(module.isDefined) End(module.get)
+  
+        } else {                                                   //Added to help bugfix; can be deletet afterwards
+          //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
+          //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
         }
       }
     }
@@ -120,45 +119,31 @@ class Menu extends Module {
       }
     }
 
-    def hightlightActive (event : MenuEvent) {
-      //draw the background colors)
-      event match {
-        case EventN =>  drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
-        case EventE =>  drawFill(MenuIcons.CategoryFill, MenuIcons.propertiesColor, location.rotate(90))
-        case EventS =>  drawFill(MenuIcons.CategoryFill, MenuIcons.modifyColor, location.rotate(180))
-        case EventW =>  drawFill(MenuIcons.CategoryFill, MenuIcons.helpersColor, location.rotate(270))
-        case EventC =>  drawFill(MenuIcons.CategoryFill, MenuIcons.fileColor, location.rotate(0))
-        case _ =>
-      }
-    }
-
-
     currentCategory.graph.foreach(t => {
       drawBackground(t._1)
     })
 
     //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
-
       val t = location concatenate TransformationMatrix(event.vector * 130, 1)
 
       // Draw the icons - if the event is the Center we should only transform to the location
       event match {
         case EventC => element.icon.foreach(s => g.draw(s.transform(location)))
         case EventN => {
-          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, if(element == activeCategory.get) {new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
           MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventE => {
-          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, if(element == activeCategory.get) {new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
           MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventS => {
-          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, if(element == activeCategory.get) { new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
           MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventW => {
-          drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, if(element == activeCategory.get) { new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
           MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case _ => {
