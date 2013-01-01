@@ -50,14 +50,16 @@ class Menu extends Module {
 
           //if N E S or W is active
           if(View.center.distanceTo(p) > 100) {
+            //TODO: modules are not erased,
+            println("MATCHING; "+currentCategory.graph.get(direction(p)))
             currentCategory.graph.get(direction(p)) foreach(_ match {
               case mc: MenuCategory => {
+                println("A")
                 activeCategory = mc
-                println(activeCategory)
               }
 
               case MenuModule(instance, icon) =>  {
-                activeCategory = Menu.startCategory
+                activeCategory = Menu.DummyCategory
                 module = instance
               }
             })
@@ -74,12 +76,14 @@ class Menu extends Module {
         } else activeCategory = Menu.startCategory
       }
       case MouseDown(p,_,_) :: tail => {
+          println("B:; "+activeCategory)
+        println("module is defined: "+module)
           //println("Sender om lidt END(module)")
           //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
           // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
           currentCategory = activeCategory
           Siigna.navigation = true
-          if(module.isDefined) End(module.get)
+          if(module.isDefined && activeCategory == Menu.DummyCategory) End(module.get)
   
           //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
           //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
