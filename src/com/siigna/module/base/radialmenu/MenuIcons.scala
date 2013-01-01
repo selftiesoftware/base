@@ -28,12 +28,12 @@ object MenuIcons {
 
   // Colors
   val createColor     = new Color(0.85f, 0.85f, 0.25f, 0.30f)
-  val fileColor       = new Color(0.40f, 0.40f, 0.40f, 0.30f)
+  val fileColor       = new Color(0.40f, 0.40f, 0.40f, 0.15f)
   val eventColor       = new Color(0.95f, 0.95f, 0.95f, 0.80f)
   val helpersColor    = new Color(0.65f, 0.80f, 0.25f, 0.30f)
   val itemColor       = new Color(0.95f, 0.95f, 0.95f, 0.55f)
   val modifyColor     = new Color(0.55f, 0.65f, 0.80f, 0.30f)
-  val propertiesColor = new Color(0.80f, 0.45f, 0.65f, 0.10f)
+  val propertiesColor = new Color(0.80f, 0.45f, 0.65f, 0.18f)
 
   // Category-shapes
   val C, E, N, W, S = T(Q(V(0, 0), V(0, 26)))
