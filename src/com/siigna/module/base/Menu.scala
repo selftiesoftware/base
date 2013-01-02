@@ -78,8 +78,11 @@ class Menu extends Module {
           // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
           currentCategory = activeCategory
           Siigna.navigation = true
-          if(module.isDefined && activeCategory == Menu.DummyCategory) End(module.get)
-          if(currentCategory.toString == "FileCategory") activeCategory = Menu.startCategory
+        if(currentCategory.toString == "FileCategory") {
+          activeCategory = Menu.startCategory
+        }
+        if(module.isDefined && activeCategory == Menu.DummyCategory) End(module.get)
+            //activeCategory = Menu.DummyCategory
           //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
           //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
 
