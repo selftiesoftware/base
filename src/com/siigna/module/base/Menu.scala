@@ -79,7 +79,7 @@ class Menu extends Module {
           currentCategory = activeCategory
           Siigna.navigation = true
           if(module.isDefined && activeCategory == Menu.DummyCategory) End(module.get)
-  
+          if(currentCategory.toString == "FileCategory") activeCategory = Menu.startCategory
           //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
           //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
 
