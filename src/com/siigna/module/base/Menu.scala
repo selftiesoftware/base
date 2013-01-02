@@ -28,8 +28,23 @@ class Menu extends Module {
   var module: Option[Module] = None
 
   private var activeCategory : MenuCategory = Menu.startCategory
+  private var activeDirection : Option[MenuElement] = None
   protected var currentCategory : MenuCategory = Menu.DummyCategory
 
+  //calculate if the mouse is above items in the radial menu
+  def hit(p : Vector2D) : Boolean = {
+    if((View.center.distanceTo(p) > 100 && View.center.distanceTo(p) < 150) || // The icons on the radius
+    (View.center.distanceTo(p) < 30)) true // Center-category
+    else false
+  }
+  
+  def calcHighlightDirection (dir : Option[MenuElement], element : MenuElement) : Boolean = {
+    if(dir.isDefined) {
+      val isActive : Boolean = (Some(element) == dir)
+      isActive
+    } else false
+  }
+  
   def stateMap: StateMap = Map(
     'Start -> {
       case e => {
@@ -45,17 +60,20 @@ class Menu extends Module {
       }
       case MouseMove(p,_,_) :: tail => {
         // Examine if we have a hit!
-        if ((View.center.distanceTo(p) > 100 && View.center.distanceTo(p) < 150) || // The icons on the radius
-          (View.center.distanceTo(p) < 30)) { // Center-category
+        if(hit(p)) {
 
           //if N E S or W is active
           if(View.center.distanceTo(p) > 100) {
-            currentCategory.graph.get(direction(p)) foreach(_ match {
+            val dir = currentCategory.graph.get(direction(p))
+            activeDirection = dir
+            dir foreach(_ match {
               case mc: MenuCategory => {
                 activeCategory = mc
               }
 
               case MenuModule(instance, icon) =>  {
+
+                //reset the active category:
                 activeCategory = Menu.DummyCategory
                 module = instance
               }
@@ -126,7 +144,7 @@ class Menu extends Module {
         case _ =>
       }
     }
-    
+ 
     def drawBackground(event : MenuEvent) {
       //draw the background colors)
       event match {
@@ -156,8 +174,11 @@ class Menu extends Module {
       drawBackground(t._1)
     })
 
+    
+   
     //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
+
       val t = location concatenate TransformationMatrix(event.vector * 130, 1)
 
       // Draw the Menu Category icons and white circular backgrounds.
@@ -184,6 +205,9 @@ class Menu extends Module {
           element.icon.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case _ => {
+          if(activeDirection.isDefined && calcHighlightDirection(activeDirection, element)) {
+            drawFill(MenuIcons.IconFill, MenuIcons.highlightIcon, t.rotate(event.rotation+30))
+          }
           //draw a fill background for the icons
           drawFill(MenuIcons.IconFill, MenuIcons.itemColor, t.rotate(event.rotation+30)) //30 deg. add needed because of icon graphics misalignment.
           //draw the icons
