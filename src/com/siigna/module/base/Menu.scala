@@ -131,14 +131,15 @@ class Menu extends Module {
         else if(currentCategory.toString == "HelpersCategory") MenuIcons.helpersColor
         else if(currentCategory.toString == "ModifyCategory") MenuIcons.modifyColor
         else if(currentCategory.toString == "PropertiesCategory") MenuIcons.propertiesColor
+        else if(currentCategory.toString == "FileCategory") MenuIcons.fileColor
         else MenuIcons.createColor
       }
       //draw the background colors)
       event match {
-        case EventN =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(360))
-        case EventE =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(90))
-        case EventS =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(180))
-        case EventW =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(270))
+        case EventN =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(360));MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+        case EventE =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(90));MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+        case EventS =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(180));MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+        case EventW =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(270));MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         case EventC =>  drawFill(MenuIcons.EventIconFill,MenuIcons.fileColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
 
         case _ =>
