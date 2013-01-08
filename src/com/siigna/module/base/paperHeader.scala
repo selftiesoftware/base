@@ -13,34 +13,75 @@ package com.siigna.module.base
 
 import com.siigna._
 import java.awt.Color
+import com.siigna.app.model.Drawing._
 
 /**
  * shapes that make up the drawing header, used in module-init and export.
  */
 
-object paperHeader {
-  
-  // horizontal headerborder
-  def headerFrame (t : TransformationMatrix, s : Int, b: Rectangle2D) = {
+object PaperHeader {
+
+  //define placeholders that are updated when the addActionListener is activated.
+  private var cachedHeaderFrame = calculateHeaderFrame
+  private var cachedOpenness = calculateOpenness
+  private var cachedScaleText = calculateScaleText
+
+  //send the functions to Drawing in mainline so that they are updated whenever an action is performed.
+  addActionListener(() => {
+    cachedHeaderFrame = calculateHeaderFrame
+    cachedOpenness = calculateOpenness
+    cachedScaleText = calculateScaleText
+    }
+  )
+
+  //transfer the header shapes to placeholders that can be called from anywhere.
+
+  /**
+   * We use cachedHeaderFrame because it is defined only when the addActionListener is active
+   * @return PolyLineShape defining the header of the drawing
+   */
+  def headerFrame = cachedHeaderFrame
+
+  /**
+   * We use cachedOpenness because it is defined only when the addActionListener is active
+   * @return PolyLineShape defining the level of openness of the drawing
+   */
+  def openness = cachedOpenness
+
+  /**
+   * We use cachedScaletext because it is defined only when the addActionListener is active
+   * @return a TextShape with the current drawing scale format: (1:XXX)
+   */
+  def scaleText = cachedScaleText
+
+  //horizontal headerborder
+  def calculateHeaderFrame = {
+    val b = Drawing.boundary
+    val s = Siigna.paperScale
     val br = b.bottomRight
     val bl = b.bottomLeft
     val pt1 = br + Vector2D(0,(6*s))
     val pt2 = Vector2D((br.x/2 + bl.x),br.y) + Vector2D(0,(6*s))
     val pt3 = Vector2D((br.x/2 + bl.x),br.y)
-    PolylineShape(pt1,pt2,pt3).transform(t).setAttribute("StrokeWidth" -> 0.3)
+    PolylineShape(pt1,pt2,pt3).setAttribute("StrokeWidth" -> 0.3)
   }
 
   //a colored frame to indicate level of openness:
   //TODO: make color dynamic on the basis of drawing level of openness
-  def openness (t : TransformationMatrix, scale: Int, b: Rectangle2D) = {
-    val oversize1 = (b.bottomLeft + Vector2D(-2 * scale, -2 * scale))
-    val oversize2 = (b.topRight + Vector2D(2 * scale, 2 * scale))
-    PolylineShape(Rectangle2D(oversize1, oversize2)).transform(t).setAttributes("Color" -> new Color(0.25f, 0.85f, 0.25f, 0.20f), "StrokeWidth" -> 4.0)
+  def calculateOpenness = {
+    val b = Drawing.boundary
+    val s = Siigna.paperScale
+    val oversize1 = (b.bottomLeft + Vector2D(-2 * s, -2 * s))
+    val oversize2 = (b.topRight + Vector2D(2 * s, 2 * s))
+    PolylineShape(Rectangle2D(oversize1, oversize2)).setAttributes("Color" -> new Color(0.25f, 0.85f, 0.25f, 0.20f), "StrokeWidth" -> 4.0)
   }
+
   // paper scale text - TODO: letter width: 50% letter spacing: 200%
-  def scaleText (t : TransformationMatrix, s : Int, b: Rectangle2D) = {
+  def calculateScaleText = {
+    val b = Drawing.boundary
+    val s = Siigna.paperScale
     val br = b.bottomRight
-    TextShape("Scale 1:"+ s, br + Vector2D(-30*s,5.1*s), s * 4).transform(t) // Paper scale
+    TextShape("Scale 1:"+ s, br + Vector2D(-30*s,5.1*s), s * 4) // Paper scale
   }
   //val getURL = TextShape(" ", Vector2D(0, 0), headerHeight * 0.7)  // Get URL
 
