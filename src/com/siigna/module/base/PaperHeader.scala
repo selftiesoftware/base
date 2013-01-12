@@ -27,7 +27,7 @@ object PaperHeader {
   private var cachedScaleText = calculateScaleText
 
   //send the functions to Drawing in mainline so that they are updated whenever an action is performed.
-  addActionListener(() => {
+  addActionListener((_, _) => {
     cachedHeaderFrame = calculateHeaderFrame
     cachedOpenness = calculateOpenness
     cachedScaleText = calculateScaleText
