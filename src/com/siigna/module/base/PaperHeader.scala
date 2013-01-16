@@ -34,8 +34,6 @@ object PaperHeader {
     }
   )
 
-  //transfer the header shapes to placeholders that can be called from anywhere.
-
   /**
    * We use cachedHeaderFrame because it is defined only when the addActionListener is active
    * @return PolyLineShape defining the header of the drawing
