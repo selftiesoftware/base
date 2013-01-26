@@ -125,7 +125,7 @@ class Menu extends Module {
       val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
       val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
       g setColor color
-      g.g.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
+      g.AWTGraphics.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
     }
     
     def drawSubmenuBackground(event : MenuEvent) {
