@@ -71,7 +71,12 @@ object PaperHeader {
     val s = Siigna.paperScale
     val oversize1 = (b.bottomLeft + Vector2D(-2 * s, -2 * s))
     val oversize2 = (b.topRight + Vector2D(2 * s, 2 * s))
-    PolylineShape(Rectangle2D(oversize1, oversize2)).setAttributes("Color" -> new Color(0.25f, 0.85f, 0.25f, 0.20f), "StrokeWidth" -> 4.0)
+    val color = Drawing.attributes.char("Openness") match {
+      case Some(Drawing.Openness.COPY) => Siigna.color("colorOpennessCopy")
+      case Some(Drawing.Openness.PRIVATE) => Siigna.color("colorOpennessPrivate")
+      case _ => Siigna.color("colorOpennessOpen")
+    }
+    PolylineShape(Rectangle2D(oversize1, oversize2)).setAttributes("Color" -> color.getOrElse("#444444".color), "StrokeWidth" -> 4.0)
   }
 
   // paper scale text - TODO: letter width: 50% letter spacing: 200%
