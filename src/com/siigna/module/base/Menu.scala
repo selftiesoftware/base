@@ -47,6 +47,11 @@ class Menu extends Module {
   
   def stateMap: StateMap = Map(
     'Start -> {
+      case Start(_, c : MenuCategory) :: tail => {
+        currentCategory = c
+        Siigna.navigation = false
+        'Interaction
+      }
       case e => {
         currentCategory = Menu.startCategory
         Siigna.navigation = false
