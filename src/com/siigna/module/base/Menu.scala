@@ -13,118 +13,26 @@ package com.siigna.module.base
 
 import com.siigna._
 import com.siigna.module.base.radialmenu._
-import java.awt.{Shape, Color}
+import java.awt.Color
 
 /**
  * The menu module.
  * This module shows the menu as radial items and categories in 13 places (directions):
  * N, NNE, ENE, E, ESE, SSE, S, SSW, WSW, W, WNW and NNW. There is also a center (C) place.
- *
- * When initialized the menu
  */
-class Menu extends Module {
-
-  var center: Option[Vector2D] = None
-  var module: Option[Module] = None
-
-  private var activeCategory : MenuCategory = Menu.startCategory
-  private var activeDirection : Option[MenuElement] = None
-  protected var currentCategory : MenuCategory = Menu.DummyCategory
-
-  //calculate if the mouse is above items in the radial menu
-  def hit(p : Vector2D) : Boolean = {
-    if((View.center.distanceTo(p) > 100 && View.center.distanceTo(p) < 150) || // The icons on the radius
-    (View.center.distanceTo(p) < 30)) true // Center-category
-    else false
-  }
-  
-  def calcHighlightDirection (dir : Option[MenuElement], element : MenuElement) : Boolean = {
-    if(dir.isDefined) {
-      val isActive : Boolean = (Some(element) == dir)
-      isActive
-    } else false
-  }
-  
-  def stateMap: StateMap = Map(
-    'Start -> {
-      case Start(_, c : MenuCategory) :: tail => {
-        currentCategory = c
-        Siigna.navigation = false
-        'Interaction
-      }
-      case e => {
-        currentCategory = Menu.startCategory
-        Siigna.navigation = false
-        'Interaction
-      }
-    },
-    'Interaction -> {
-      case MouseDown(_, MouseButtonRight, _) :: tail => {
-        Siigna.navigation = true
-        End
-      }
-      case MouseMove(p,_,_) :: tail => {
-        // Examine if we have a hit!
-        if(hit(p)) {
-
-          //if N E S or W is active
-          if(View.center.distanceTo(p) > 100) {
-            val dir = currentCategory.graph.get(direction(p))
-            activeDirection = dir
-            dir foreach(_ match {
-              case mc: MenuCategory => {
-                activeCategory = mc
-              }
-
-              case MenuModule(instance, icon) =>  {
-
-                //reset the active category:
-                activeCategory = Menu.DummyCategory
-                module = instance
-              }
-            })
-          }
-          //if C is active
-          else if(View.center.distanceTo(p) < 30) {
-            currentCategory.graph.get(EventC) foreach(_ match {
-              case mc: MenuCategory => activeCategory = mc
-              case MenuModule(instance, icon) =>  {
-                module = instance
-              }
-            })
-          }
-        } else activeCategory = Menu.startCategory
-      }
-      case MouseDown(p,_,_) :: tail => {
-          //println("Sender om lidt END(module)")
-          //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix: Menu fails
-          // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
-          currentCategory = activeCategory
-          Siigna.navigation = true
-        if(currentCategory.toString == "FileCategory") {
-          activeCategory = Menu.startCategory
-        }
-        if(module.isDefined && activeCategory == Menu.DummyCategory) {
-          println(module)
-          End(module.get)
-        }
-            //activeCategory = Menu.DummyCategory
-          //println("Mouse clicked outside active areas of menu")      //Added to help bugfix; can be deletet afterwards
-          //println("Distance to center: " + View.center.distanceTo (p))  //Added to help bugfix; can be deletet afterwards
-
-      }
-    }
-  )
+class Menu extends Module with MenuLogic {
 
   /**
-   * Paints the menu. If the menu is being initalized we multiply the transformationMatrix with a <code>distanceScale</code> to show an animation
-   * of the icons, origining from the center.
+   * Paints the menu.
    */
   override def paint(g : Graphics, transformation : TransformationMatrix) {
+    // The icons are made to fit a scale starting at 130,
+    // so we need to adjust the zoom if the radius changes
+    val scale = radius / 130.0
+    val location = TransformationMatrix(center, scale).flipY
+    val colorAttr = "Color" -> new Color(150, 150, 150, 150)
 
-    val location = TransformationMatrix(View.center, 1).flipY
-    val colorAttr = "Color" -> new Color(150, 150, 150)
-
+    // Draws a fill shape
     def drawFill (fillShape: Array[Vector2D], color : Color, transformation : TransformationMatrix) {
       val fillVector2Ds = fillShape.map(_.transform(transformation))
       val fillScreenX = fillVector2Ds.map(_.x.toInt).toArray
@@ -132,87 +40,52 @@ class Menu extends Module {
       g setColor color
       g.AWTGraphics.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
     }
-    
-    def drawSubmenuBackground(event : MenuEvent) {
-      def color = {
-        if(currentCategory.toString == "CreateCategory") MenuIcons.createColor
-        else if(currentCategory.toString == "HelpersCategory") MenuIcons.helpersColor
-        else if(currentCategory.toString == "ModifyCategory") MenuIcons.modifyColor
-        else if(currentCategory.toString == "PropertiesCategory") MenuIcons.propertiesColor
-        else if(currentCategory.toString == "FileCategory") MenuIcons.fileColor
-        else MenuIcons.createColor
-      }
+
+    def drawBackground(event : MenuEvent, element : MenuElement) {
       //draw the background colors)
       event match {
-        case EventN =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(360));MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
-        case EventE =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(90));MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
-        case EventS =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(180));MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
-        case EventW =>  drawFill(MenuIcons.CategoryFill, color, location.rotate(270));MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
-        case EventC =>  drawFill(MenuIcons.EventIconFill,MenuIcons.fileColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+        case EventN => drawFill(MenuIcons.CategoryFill,  MenuIcons.createColor, location.rotate(360))
+        case EventE => drawFill(MenuIcons.CategoryFill,  MenuIcons.propertiesColor, location.rotate(90))
+        case EventS => drawFill(MenuIcons.CategoryFill,  MenuIcons.modifyColor, location.rotate(180))
+        case EventW => drawFill(MenuIcons.CategoryFill,  MenuIcons.helpersColor, location.rotate(270))
+        case EventC => drawFill(MenuIcons.EventIconFill, MenuIcons.fileColor, location)
 
         case _ =>
       }
     }
- 
-    def drawBackground(event : MenuEvent) {
-      //draw the background colors)
-      event match {
-        case EventN =>  drawFill(MenuIcons.CategoryFill, MenuIcons.createColor, location.rotate(360))
-        case EventE =>  drawFill(MenuIcons.CategoryFill, MenuIcons.propertiesColor, location.rotate(90))
-        case EventS =>  drawFill(MenuIcons.CategoryFill, MenuIcons.modifyColor, location.rotate(180))
-        case EventW =>  drawFill(MenuIcons.CategoryFill, MenuIcons.helpersColor, location.rotate(270))
-        case EventC =>  drawFill(MenuIcons.EventIconFill,MenuIcons.fileColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
-
-        case _ =>
-      }
-    }
-    //TODO: hack! make this generic.
-    //draw backgrounds in submenus and BACK button to enable return to StartCategory
-    if(currentCategory.toString != "StartCategory" ) {
-      drawSubmenuBackground(EventN)
-      drawSubmenuBackground(EventE)
-      drawSubmenuBackground(EventS)
-      drawSubmenuBackground(EventW)
-      drawFill(MenuIcons.EventIconFill, MenuIcons.eventColor, location concatenate TransformationMatrix(Vector2D(0,0) - Vector2D(0,130), 1))
-      g.draw(CircleShape(View.center,26).addAttributes(colorAttr))
-      g.draw(TextShape("back", Vector2D(View.center.x -15,View.center.y -6) ,12))
-    }
-
-     //draw colored backgrounds
-    currentCategory.graph.foreach(t => {
-      drawBackground(t._1)
-    })
 
     //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
 
-      val t = location concatenate TransformationMatrix(event.vector * 130, 1)
+      val t = location concatenate TransformationMatrix(event.vector * radius / scale, 1)
+      val eventT = location concatenate TransformationMatrix((event.vector * radius - Vector2D(0,radius)) / scale, 1)
+      val color = if(element == activeCategory) Color.white else MenuIcons.eventColor
 
       // Draw the Menu Category icons and white circular backgrounds.
       // If the event is the Center we should only transform to the location.
       event match {
         case EventN => {
-          drawFill(MenuIcons.EventIconFill, if(element == activeCategory) {new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, color, eventT)
           MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventE => {
-          drawFill(MenuIcons.EventIconFill, if(element == activeCategory) {new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, color, eventT)
           MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventS => {
-          drawFill(MenuIcons.EventIconFill, if(element == activeCategory) { new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, color, eventT)
           MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventW => {
-          drawFill(MenuIcons.EventIconFill, if(element == activeCategory) { new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, color, eventT)
           MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case EventC => {
-          drawFill(MenuIcons.EventIconFill, if(element == activeCategory) { new Color(1.00f, 1.00f, 1.00f, 1.00f)} else MenuIcons.eventColor, location concatenate TransformationMatrix(event.vector * 130 - Vector2D(0,130), 1))
+          drawFill(MenuIcons.EventIconFill, color, eventT)
           element.icon.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
         case _ => {
-          if(activeDirection.isDefined && calcHighlightDirection(activeDirection, element)) {
+          if (direction(mousePosition) == event && center.distanceTo(mousePosition) > innerPeriphery) {
             drawFill(MenuIcons.IconFill, MenuIcons.highlightIcon, t.rotate(event.rotation+30))
           }
           //draw a fill background for the icons
@@ -224,18 +97,16 @@ class Menu extends Module {
         }
       }
     }
-    //run the drawElement function on the currently active category:
-    currentCategory.graph.foreach(t => {
-      drawElement(t._1,t._2)
-    })
 
     //Function to draw text in icons and as guides.
     def drawText(event : MenuEvent) {
-      val position = Vector2D(View.center.x -18,View.center.y -4)
+      val position = Vector2D(center.x -18,center.y -4)
       def eventText(text : String, size : Int) {
-        g.draw(TextShape(text,position - (event.vector * 130),size))
+        g.draw(TextShape(text,position - (event.vector * radius),size))
       }
-      def circleOutline(e : MenuEvent) = g.draw(CircleShape(View.center,26).transform(TransformationMatrix(- e.vector * 130, 1)).addAttributes(colorAttr))
+      def circleOutline(e : MenuEvent) {
+        g.draw(CircleShape(center,peripheryWidth).transform(TransformationMatrix(- e.vector * radius, 1)).addAttributes(colorAttr))
+      }
 
       event match {
         case EventN => {
@@ -261,33 +132,61 @@ class Menu extends Module {
       }
     }
 
-    currentCategory.graph.foreach(t => {
-      drawText(t._1)
-    })
+    // Draw the large category backgrounds
+    if (!currentCategory.graph.contains(EventE) &&
+      (currentCategory.graph.contains(EventENE) || currentCategory.graph.contains(EventESE))) {
+      drawFill(MenuIcons.CategoryFill, currentCategory.color, location)
+      MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+    }
+
+    if (!currentCategory.graph.contains(EventN) &&
+      (currentCategory.graph.contains(EventNNE) || currentCategory.graph.contains(EventNNW))) {
+      drawFill(MenuIcons.CategoryFill, currentCategory.color, location.rotate(270))
+      MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+    }
+
+    if (!currentCategory.graph.contains(EventW) &&
+      (currentCategory.graph.contains(EventWNW) || currentCategory.graph.contains(EventWSW))) {
+      drawFill(MenuIcons.CategoryFill, currentCategory.color, location.rotate(90))
+      MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+    }
+
+    if (!currentCategory.graph.contains(EventS) &&
+      (currentCategory.graph.contains(EventSSW) || currentCategory.graph.contains(EventSSE))) {
+      drawFill(MenuIcons.CategoryFill, currentCategory.color, location.rotate(180))
+      MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+    }
+
+    // Draw colored backgrounds
+    currentCategory.graph.foreach(t => drawBackground(t._1, t._2))
+
+    // Draw the currently active category recursively
+    currentCategory.graph.foreach(t => drawElement(t._1,t._2))
+
+    // Draw the text on top
+    currentCategory.graph.foreach(t => drawText(t._1))
+
+    // If no center is present, and a parent is available, draw a 'back' button
+    if (!currentCategory.graph.contains(EventC) && currentCategory.parent.isDefined) {
+      val parent = currentCategory.parent.get
+      val color = if (parent == activeCategory) parent.color.brighter() else parent.color
+      drawFill(MenuIcons.EventIconFill, color, location.translate(Vector2D(0, -radius)))
+      g.draw(CircleShape(center, peripheryWidth).addAttributes(colorAttr))
+      g.draw(TextShape("back", Vector2D(center.x -15, center.y -6), 12))
+    }
+
+    // Finally draw the active selection
+    def drawTooltip(text : String) {
+      g draw TextShape(text, Vector2D(center.x, center.y + peripheryWidth * 2), 10,
+        Attributes("TextAlignment" -> Vector2D(0.5, 0.5)))
+    }
+
+    activeDirection match {
+      case Some(module : MenuModule) => if (module.instance.isDefined) drawTooltip(module.instance.get.toString)
+      case _ =>
+    }
   }
 
-  /**
-   * Returns the direction in terms of MenuEvents, calculated from the angle
-   * of a given point to the current center of the radial menu.
-   */
-  def direction(point : Vector2D) = {
-    // First re-fit the angle to a positive y-axis (as opposed to the device coordinate system
-    // that has a negative y-axis)
-    val angle  = Vector2D(point.x - View.center.x, View.center.y - point.y).angle
-    if      (angle >= 345 || angle < 15)   EventE
-    else if (angle >= 15  && angle < 45)   EventENE
-    else if (angle >= 45  && angle < 75)   EventNNE
-    else if (angle >= 75  && angle < 105)  EventN
-    else if (angle >= 105 && angle < 135)  EventNNW
-    else if (angle >= 135 && angle < 165)  EventWNW
-    else if (angle >= 165 && angle < 195)  EventW
-    else if (angle >= 195 && angle < 225)  EventWSW
-    else if (angle >= 225 && angle < 255)  EventSSW
-    else if (angle >= 255 && angle < 285)  EventS
-    else if (angle >= 285 && angle < 315)  EventSSE
-    else if (angle >= 315 && angle < 345)  EventESE
-    else                                  MenuEventNone
-  }
 }
 /**
  * An immutable object used for values associated with the [[com.siigna.module.base.Menu]]
@@ -298,12 +197,12 @@ class Menu extends Module {
 object Menu {
 
   // A simple dummy category
-  protected val DummyCategory = new MenuCategory {
+  val dummyCategory = new MenuCategory {
     val color = Color.white
     val graph = Map[MenuEvent, MenuElement]()
     val parent = None
   }
 
   // The current active category
-  var startCategory : MenuCategory = DummyCategory
+  var startCategory : MenuCategory = dummyCategory
 }

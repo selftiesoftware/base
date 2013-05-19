@@ -44,10 +44,11 @@ trait MenuElement {
  *   val graph = Map(EventN -> MenuModule(Module('cad, "Line"), MenuIcons.line))
  * }}}
  *
- * That would give a category that displays a nice icon at north (hopefully resembling a line), and that, when clicked
- * forward to the module named 'Line.
+ * That would give a category that displays a nice icon at north (probably resembling a line), which will, when clicked,
+ * start the module named 'Line.
  */
 trait MenuCategory extends MenuElement {
+
   /**
    * The color used for background-filling.
    */
@@ -58,7 +59,7 @@ trait MenuCategory extends MenuElement {
   /**
    * The graph describing the action ([[com.siigna.module.base.radialmenu.MenuElement]]) to take given a certain
    * event [[com.siigna.module.base.radialmenu.MenuEvent]]. This is used by the [[com.siigna.module.base.Menu]] to
-   * figure our which module or category to forward to.
+   * draw the menu and figure out which module or category to forward to.
    * @return  A map of [[com.siigna.module.base.radialmenu.MenuEvent]] linking to a
    *          [[com.siigna.module.base.radialmenu.MenuElement]].
    */
