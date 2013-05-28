@@ -143,14 +143,14 @@ class Menu extends Module with MenuLogic {
     // Draw the large category backgrounds
     if (!currentCategory.graph.contains(EventE) &&
       (currentCategory.graph.contains(EventENE) || currentCategory.graph.contains(EventESE))) {
-      drawFill(MenuIcons.CategoryFill, currentCategory.color, location)
-      MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+      drawFill(MenuIcons.CategoryFill, currentCategory.color, location.rotate(270))
+      MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
     }
 
     if (!currentCategory.graph.contains(EventN) &&
       (currentCategory.graph.contains(EventNNE) || currentCategory.graph.contains(EventNNW))) {
-      drawFill(MenuIcons.CategoryFill, currentCategory.color, location.rotate(270))
-      MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+      drawFill(MenuIcons.CategoryFill, currentCategory.color, location)
+      MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
     }
 
     if (!currentCategory.graph.contains(EventW) &&
