@@ -1,20 +1,13 @@
 /*
- * Copyright (c) 2008-2013, Selftie Software. Siigna is released under the
- * creative common license by-nc-sa. You are free
+ * Copyright (c) 2008-2013. Siigna is released under the creative common license by-nc-sa. You are free
  *   to Share — to copy, distribute and transmit the work,
  *   to Remix — to adapt the work
  *
  * Under the following conditions:
- *   Attribution —   You must attribute the work to http://siigna.com in
- *                    the manner specified by the author or licensor (but
- *                    not in any way that suggests that they endorse you
- *                    or your use of the work).
+ *   Attribution —  You must attribute the work to http://siigna.com in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
  *   Noncommercial — You may not use this work for commercial purposes.
- *   Share Alike   — If you alter, transform, or build upon this work, you
- *                    may distribute the resulting work only under the
- *                    same or similar license to this one.
+ *   Share Alike — If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
  *
- * Read more at http://siigna.com and https://github.com/siigna/main
  */
 
 package com.siigna.module.base.radialmenu
@@ -30,11 +23,11 @@ trait MenuLogic {
   var center : Vector2D = View.center
   var module: Option[Module] = None
 
-  // The radius of the menu, inner and outer periphery and width of the periphery
+  // The radius of the menu, inner and outer perifery and width of the perifery
   var radius = 130
-  def innerPeriphery = radius * 0.80
-  def peripheryWidth = radius * 0.20
-  def outerPeriphery = radius * 1.20
+  def innerPeriphery = radius * 0.76
+  def peripheryWidth = radius * 0.24
+  def outerPeriphery = radius * 1.24
 
   def mousePosition : Vector2D
 
@@ -66,7 +59,7 @@ trait MenuLogic {
   }
 
   //calculate if the mouse is above items in the radial menu
-  protected def hit(p : Vector2D) : Boolean = {
+  private def hit(p : Vector2D) : Boolean = {
     if((center.distanceTo(p) > innerPeriphery && center.distanceTo(p) < outerPeriphery) || // The icons on the radius
       (center.distanceTo(p) < peripheryWidth)) true // Center-category
     else false
@@ -126,23 +119,19 @@ trait MenuLogic {
           //if N E S or W is active
           if(center.distanceTo(p) > innerPeriphery) {
             val dir = currentCategory.graph.get(direction(p))
-            // Only change the direction if it is not the same
-            if (activeDirection != dir) {
-              activeDirection = dir
+            activeDirection = dir
+            dir foreach(_ match {
+              case mc: MenuCategory => {
+                activeCategory = mc
+              }
 
-              dir foreach(_ match {
-                case mc: MenuCategory => {
-                  activeCategory = mc
-                }
+              case MenuModule(instance, icon) =>  {
 
-                case MenuModule(instance, icon) =>  {
-
-                  //reset the active category:
-                  activeCategory = Menu.dummyCategory
-                  module = instance
-                }
-              })
-            }
+                //reset the active category:
+                activeCategory = Menu.dummyCategory
+                module = instance
+              }
+            })
           }
           //if C is active
           else if(center.distanceTo(p) < peripheryWidth) {

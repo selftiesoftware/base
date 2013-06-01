@@ -194,7 +194,6 @@ class Menu extends Module with MenuLogic {
       case _ =>
     }
   }
-
 }
 /**
  * An immutable object used for values associated with the [[com.siigna.module.base.Menu]]
