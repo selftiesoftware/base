@@ -1,12 +1,20 @@
 /*
- * Copyright (c) 2008-2013. Siigna is released under the creative common license by-nc-sa. You are free
- * to Share — to copy, distribute and transmit the work,
- * to Remix — to adapt the work
+ * Copyright (c) 2008-2013, Selftie Software. Siigna is released under the
+ * creative common license by-nc-sa. You are free
+ *   to Share — to copy, distribute and transmit the work,
+ *   to Remix — to adapt the work
  *
  * Under the following conditions:
- * Attribution —  You must attribute the work to http://siigna.com in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
- * Noncommercial — You may not use this work for commercial purposes.
- * Share Alike — If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
+ *   Attribution —   You must attribute the work to http://siigna.com in
+ *                    the manner specified by the author or licensor (but
+ *                    not in any way that suggests that they endorse you
+ *                    or your use of the work).
+ *   Noncommercial — You may not use this work for commercial purposes.
+ *   Share Alike   — If you alter, transform, or build upon this work, you
+ *                    may distribute the resulting work only under the
+ *                    same or similar license to this one.
+ *
+ * Read more at http://siigna.com and https://github.com/siigna/main
  */
 
 package com.siigna.module.base.radialmenu
@@ -44,10 +52,11 @@ trait MenuElement {
  *   val graph = Map(EventN -> MenuModule(Module('cad, "Line"), MenuIcons.line))
  * }}}
  *
- * That would give a category that displays a nice icon at north (hopefully resembling a line), and that, when clicked
- * forward to the module named 'Line.
+ * That would give a category that displays a nice icon at north (probably resembling a line), which will, when clicked,
+ * start the module named 'Line.
  */
 trait MenuCategory extends MenuElement {
+
   /**
    * The color used for background-filling.
    */
@@ -58,7 +67,7 @@ trait MenuCategory extends MenuElement {
   /**
    * The graph describing the action ([[com.siigna.module.base.radialmenu.MenuElement]]) to take given a certain
    * event [[com.siigna.module.base.radialmenu.MenuEvent]]. This is used by the [[com.siigna.module.base.Menu]] to
-   * figure our which module or category to forward to.
+   * draw the menu and figure out which module or category to forward to.
    * @return  A map of [[com.siigna.module.base.radialmenu.MenuEvent]] linking to a
    *          [[com.siigna.module.base.radialmenu.MenuElement]].
    */

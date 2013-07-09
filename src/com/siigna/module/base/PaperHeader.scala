@@ -1,12 +1,20 @@
 /*
- * Copyright (c) 2008-2013. Siigna is released under the creative common license by-nc-sa. You are free
- * to Share — to copy, distribute and transmit the work,
- * to Remix — to adapt the work
+ * Copyright (c) 2008-2013, Selftie Software. Siigna is released under the
+ * creative common license by-nc-sa. You are free
+ *   to Share — to copy, distribute and transmit the work,
+ *   to Remix — to adapt the work
  *
  * Under the following conditions:
- * Attribution —  You must attribute the work to http://siigna.com in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
- * Noncommercial — You may not use this work for commercial purposes.
- * Share Alike — If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
+ *   Attribution —   You must attribute the work to http://siigna.com in
+ *                    the manner specified by the author or licensor (but
+ *                    not in any way that suggests that they endorse you
+ *                    or your use of the work).
+ *   Noncommercial — You may not use this work for commercial purposes.
+ *   Share Alike   — If you alter, transform, or build upon this work, you
+ *                    may distribute the resulting work only under the
+ *                    same or similar license to this one.
+ *
+ * Read more at http://siigna.com and https://github.com/siigna/main
  */
 
 package com.siigna.module.base
@@ -71,7 +79,12 @@ object PaperHeader {
     val s = Siigna.paperScale
     val oversize1 = (b.bottomLeft + Vector2D(-2 * s, -2 * s))
     val oversize2 = (b.topRight + Vector2D(2 * s, 2 * s))
-    PolylineShape(Rectangle2D(oversize1, oversize2)).setAttributes("Color" -> new Color(0.25f, 0.85f, 0.25f, 0.20f), "StrokeWidth" -> 4.0)
+    val color = Drawing.attributes.char("Openness") match {
+      case Some(Drawing.Openness.COPY) => Siigna.color("colorOpennessCopy")
+      case Some(Drawing.Openness.PRIVATE) => Siigna.color("colorOpennessPrivate")
+      case _ => Siigna.color("colorOpennessOpen")
+    }
+    PolylineShape(Rectangle2D(oversize1, oversize2)).setAttributes("Color" -> color.getOrElse("#444444".color), "StrokeWidth" -> 4.0)
   }
 
   // paper scale text - TODO: letter width: 50% letter spacing: 200%
