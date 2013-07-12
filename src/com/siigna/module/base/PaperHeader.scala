@@ -34,14 +34,9 @@ object PaperHeader {
 
   //send the functions to Drawing in mainline so that they are updated whenever an action is performed.
   addActionListener((_, _) => {
-    Drawing.model.tree.onSuccess{
-      case _ => {
-        Thread.sleep(200) // Make sure the mbr has been updated
-        cachedHeaderFrame = calculateHeaderFrame
-        cachedOpenness = calculateOpenness
-        cachedScaleText = calculateScaleText
-      }
-    }(concurrent.ExecutionContext.Implicits.global)
+    cachedHeaderFrame = calculateHeaderFrame
+    cachedOpenness = calculateOpenness
+    cachedScaleText = calculateScaleText
   })
 
   /**
