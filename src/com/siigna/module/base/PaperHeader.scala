@@ -20,13 +20,11 @@
 package com.siigna.module.base
 
 import com.siigna._
-import java.awt.Color
 import com.siigna.app.model.Drawing._
 
 /**
  * shapes that make up the drawing header, used in module-init and export.
  */
-
 object PaperHeader {
 
   //define placeholders that are updated when the addActionListener is activated.
@@ -36,11 +34,15 @@ object PaperHeader {
 
   //send the functions to Drawing in mainline so that they are updated whenever an action is performed.
   addActionListener((_, _) => {
-    cachedHeaderFrame = calculateHeaderFrame
-    cachedOpenness = calculateOpenness
-    cachedScaleText = calculateScaleText
-    }
-  )
+    Drawing.model.tree.onSuccess{
+      case _ => {
+        Thread.sleep(200) // Make sure the mbr has been updated
+        cachedHeaderFrame = calculateHeaderFrame
+        cachedOpenness = calculateOpenness
+        cachedScaleText = calculateScaleText
+      }
+    }(concurrent.ExecutionContext.Implicits.global)
+  })
 
   /**
    * We use cachedHeaderFrame because it is defined only when the addActionListener is active
