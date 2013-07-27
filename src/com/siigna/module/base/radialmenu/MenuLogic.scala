@@ -144,7 +144,7 @@ trait MenuLogic {
           }
         } else activeCategory = Menu.startCategory
       }
-      case MouseDown(p,_,_) :: tail => {
+      case MouseUp(p,_,_) :: tail => {
         // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
         currentCategory = activeCategory
         Siigna.navigation = true
