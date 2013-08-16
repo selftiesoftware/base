@@ -30,13 +30,13 @@ object PaperHeader {
   //define placeholders that are updated when the addActionListener is activated.
   private var cachedHeaderFrame = calculateHeaderFrame
   private var cachedOpenness = calculateOpenness
-  private var cachedScaleText = calculateScaleText
+  private var cachedScaleText = calculateFooterText
 
   //send the functions to Drawing in mainline so that they are updated whenever an action is performed.
   addActionListener((_, _) => {
     cachedHeaderFrame = calculateHeaderFrame
     cachedOpenness = calculateOpenness
-    cachedScaleText = calculateScaleText
+    cachedScaleText = calculateFooterText
   })
 
   /**
@@ -63,9 +63,9 @@ object PaperHeader {
     val s = Siigna.paperScale
     val br = b.bottomRight
     val bl = b.bottomLeft
-    val pt1 = br + Vector2D(0,(6*s))
-    val pt2 = Vector2D((br.x/2 + bl.x),br.y) + Vector2D(0,(6*s))
-    val pt3 = Vector2D((br.x/2 + bl.x),br.y)
+    val pt1 = br + Vector2D(0,6*s)
+    val pt2 = Vector2D(br.x/2 + bl.x,br.y) + Vector2D(0,6*s)
+    val pt3 = Vector2D(br.x/2 + bl.x,br.y)
     PolylineShape(pt1,pt2,pt3).setAttribute("StrokeWidth" -> 0.3)
   }
 
@@ -74,8 +74,8 @@ object PaperHeader {
   def calculateOpenness = {
     val b = Drawing.boundary
     val s = Siigna.paperScale
-    val oversize1 = (b.bottomLeft + Vector2D(-2 * s, -2 * s))
-    val oversize2 = (b.topRight + Vector2D(2 * s, 2 * s))
+    val oversize1 = b.bottomLeft + Vector2D(-2 * s, -2 * s)
+    val oversize2 = b.topRight + Vector2D(2 * s, 2 * s)
     val color = Drawing.attributes.char("Openness") match {
       case Some(Drawing.Openness.COPY) => Siigna.color("colorOpennessCopy")
       case Some(Drawing.Openness.PRIVATE) => Siigna.color("colorOpennessPrivate")
@@ -84,12 +84,14 @@ object PaperHeader {
     PolylineShape(Rectangle2D(oversize1, oversize2)).setAttributes("Color" -> color.getOrElse("#444444".color), "StrokeWidth" -> 4.0)
   }
 
-  // paper scale text - TODO: letter width: 50% letter spacing: 200%
-  def calculateScaleText = {
-    val b = Drawing.boundary
+  // paper footer text - TODO: letter width: 50% letter spacing: 200%
+  def calculateFooterText = {
     val s = Siigna.paperScale
-    val br = b.bottomRight
-    TextShape("Scale 1:"+ s, br + Vector2D(-30*s,5.1*s), s * 4) // Paper scale
+
+    val title = Siigna.string("title").getOrElse("Anonymous drawing") + Siigna.int("id").map(" #" +).getOrElse("")
+
+    TextShape(s"$title - Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(5 * s, 0), s * 4,
+      Attributes("TextAlignment" -> Vector2D(1, 1)))
   }
   //val getURL = TextShape(" ", Vector2D(0, 0), headerHeight * 0.7)  // Get URL
 
