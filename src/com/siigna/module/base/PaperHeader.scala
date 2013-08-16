@@ -88,7 +88,8 @@ object PaperHeader {
   def calculateFooterText = {
     val s = Siigna.paperScale
 
-    val title = Siigna.string("title").getOrElse("Anonymous drawing") + Siigna.int("id").map(" #" +).getOrElse("")
+    val title = Drawing.attributes.string("title").getOrElse("Anonymous drawing") +
+                Drawing.attributes.int("id").map(" #" +).getOrElse("")
 
     TextShape(s"$title - Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(5 * s, 0), s * 4,
       Attributes("TextAlignment" -> Vector2D(1, 1)))
