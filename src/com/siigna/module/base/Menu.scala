@@ -34,6 +34,7 @@ class Menu extends Module with MenuLogic {
    * Paints the menu.
    */
   override def paint(g : Graphics, transformation : TransformationMatrix) {
+    try {
     // The icons are made to fit a scale starting at 130,
     // so we need to adjust the zoom if the radius changes
     val scale = radius / 130.0
@@ -192,6 +193,8 @@ class Menu extends Module with MenuLogic {
     activeDirection match {
       case Some(module : MenuModule) => if (module.instance.isDefined) drawTooltip(module.instance.get.toString)
       case _ =>
+    }} catch {
+      case _ : Throwable =>
     }
   }
 }
