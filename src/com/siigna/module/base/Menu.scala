@@ -57,7 +57,7 @@ class Menu extends Module with MenuLogic {
         case EventE => drawFill(MenuIcons.CategoryFill,  MenuIcons.propertiesColor, location.rotate(90))
         case EventS => drawFill(MenuIcons.CategoryFill,  MenuIcons.editColor, location.rotate(180))
         case EventW => drawFill(MenuIcons.CategoryFill,  MenuIcons.helpersColor, location.rotate(270))
-        case EventC => drawFill(MenuIcons.EventIconFill, MenuIcons.fileColor, location)
+        //case EventC => drawFill(MenuIcons.EventIconFill, MenuIcons.fileColor, location)
 
         case _ =>
       }
@@ -89,10 +89,10 @@ class Menu extends Module with MenuLogic {
           drawFill(MenuIcons.EventIconFill, color, eventT)
           MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
         }
-        case EventC => {
-          drawFill(MenuIcons.EventIconFill, color, eventT)
-          element.icon.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
-        }
+        //case EventC => {
+        //  drawFill(MenuIcons.EventIconFill, color, eventT)
+        //  element.icon.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+        //}
         case _ => {
           if (direction(mousePosition) == event && center.distanceTo(mousePosition) > innerPeriphery) {
             drawFill(MenuIcons.IconFill, MenuIcons.highlightIcon, t.rotate(event.rotation+30))
@@ -124,19 +124,19 @@ class Menu extends Module with MenuLogic {
         }
         case EventE => {
           circleOutline(event)
-          eventText("Properties",6)
+          eventText("File",9)
         }
         case EventS => {
           circleOutline(event)
-          eventText("Modify",9)
+          eventText("Edit",9)
         }
         case EventW => {
           circleOutline(event)
-          eventText("Helpers",8)
+          eventText("Helpers",9)
         }
-        case EventC => {
-          eventText("File",12)
-        }
+        //case EventC => {
+        //  eventText("File",12)
+        //}
         case _ =>
       }
     }
