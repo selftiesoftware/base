@@ -55,7 +55,7 @@ class Menu extends Module with MenuLogic {
       event match {
         case EventN => drawFill(MenuIcons.CategoryFill,  MenuIcons.createColor, location.rotate(360))
         case EventE => drawFill(MenuIcons.CategoryFill,  MenuIcons.propertiesColor, location.rotate(90))
-        case EventS => drawFill(MenuIcons.CategoryFill,  MenuIcons.modifyColor, location.rotate(180))
+        case EventS => drawFill(MenuIcons.CategoryFill,  MenuIcons.editColor, location.rotate(180))
         case EventW => drawFill(MenuIcons.CategoryFill,  MenuIcons.helpersColor, location.rotate(270))
         case EventC => drawFill(MenuIcons.EventIconFill, MenuIcons.fileColor, location)
 
