@@ -31,12 +31,16 @@ object PaperHeader {
   private var cachedHeaderFrame = calculateHeaderFrame
   private var cachedOpenness = calculateOpenness
   private var cachedScaleText = calculateFooterText
+  private var cachedScaleArrows = calculateFooterArrows
+  private var cachedSizeArrows = calculatePaperArrows
 
   //send the functions to Drawing in mainline so that they are updated whenever an action is performed.
   addActionListener((_, _) => {
     cachedHeaderFrame = calculateHeaderFrame
     cachedOpenness = calculateOpenness
     cachedScaleText = calculateFooterText
+    cachedScaleArrows = calculateFooterArrows
+    cachedSizeArrows = calculatePaperArrows
   })
 
   /**
@@ -57,16 +61,42 @@ object PaperHeader {
    */
   def scaleText = cachedScaleText
 
+  /**
+   * We use cachedScaleArrows because it is defined only when the addActionListener is active
+   * @return a PolylineShape showing where to click to change drawing scale
+   */
+  def scaleArrows = cachedScaleArrows
+
+  /**
+   * We use cachedSizeArrows because it is defined only when the addActionListener is active
+   * @return a PolylineShape showing where to click to change the paper size
+   */
+  def sizeArrows = cachedSizeArrows
+
   //horizontal headerborder
   def calculateHeaderFrame = {
     val b = Drawing.boundary
-    val s = Siigna.paperScale
     val br = b.bottomRight
     val bl = b.bottomLeft
-    val pt1 = br + Vector2D(0,6*s)
-    val pt2 = Vector2D(br.x/2 + bl.x,br.y) + Vector2D(0,6*s)
-    val pt3 = Vector2D(br.x/2 + bl.x,br.y)
-    PolylineShape(pt1,pt2,pt3).setAttribute("StrokeWidth" -> 0.3)
+    val tr = b.topRight
+
+    /*      tr
+    *-----*
+    |  p2 | ->  p2x = br.x + (bl.x - br.x)/2
+    |  *--p1 -> p1y = br.y + (tr.y - br.y)/2
+    |  |  |
+    *--p3-*
+   bl     br
+    */
+
+    val p1x = br.x
+    val p1y = if(b.height<b.width) br.y + (tr.y - br.y)/30 else br.y + (tr.y - br.y)/45
+    val p2x = if(b.height<b.width) br.x + (bl.x - br.x)/2 else br.x + (bl.x - br.x)/1.5
+    val p2y = p1y
+    val p3x = p2x
+    val p3y = bl.y
+
+    PolylineShape(Vector2D(p1x,p1y),Vector2D(p2x,p2y),Vector2D(p3x,p3y)).setAttribute("StrokeWidth" -> 0.1)
   }
 
   //a colored frame to indicate level of openness:
@@ -84,21 +114,51 @@ object PaperHeader {
     PolylineShape(Rectangle2D(oversize1, oversize2)).setAttributes("Color" -> color.getOrElse("#444444".color), "StrokeWidth" -> 4.0)
   }
 
-  // paper footer text - TODO: letter width: 50% letter spacing: 200%
+  // paper footer text
   def calculateFooterText = {
     val s = Siigna.paperScale
-
+    val b = Drawing.boundaryScale
     val title = Drawing.attributes.string("title").getOrElse("Anonymous drawing") +
                 Drawing.attributes.int("id").map(" #" +).getOrElse("")
 
-    TextShape(s"$title - Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(5 * s, 0), s * 4,
-      Attributes("TextAlignment" -> Vector2D(1, 1)))
+    TextShape(s"$title                 A4             Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(8 * b, -1.7 * b), b * 3,Attributes("TextAlignment" -> Vector2D(1, 1)))
   }
-  //val getURL = TextShape(" ", Vector2D(0, 0), headerHeight * 0.7)  // Get URL
 
-  //g draw separator
-  //val seperator = (getURL.transform(transformation.translate(scale.boundary.topRight + unitX(4))))
+  // paper footer scale adjustment arrows
+  def calculateFooterArrows = {
+    val b = Drawing.boundaryScale
+    val br = Drawing.boundary.bottomRight
 
-  //TODO: draw title and ID
+    val v1 = br + Vector2D(-1*b,4*b)
+    val v2 = br + Vector2D(-2.5*b,6*b)
+    val v3 = br + Vector2D(-4*b,4*b)
+
+    val m1 = br + Vector2D(-2.5*b,4*b)
+    val m2 = br + Vector2D(-2.5*b,3*b)
+
+    val v4 = br + Vector2D(-1*b,3*b)
+    val v5 = br + Vector2D(-2.5*b,1*b)
+    val v6 = br + Vector2D(-4*b,3*b)
+    PolylineShape(v1,v2,v3,v1,m1,m2,v4,v5,v6,v4).setAttributes("Color" -> "#444444".color, "StrokeWidth" -> 0.1)
+  }
+
+  // paper size adjustment arrows
+  def calculatePaperArrows = {
+    val b = Drawing.boundaryScale
+    val br = Drawing.boundary.bottomRight
+
+    val v1 = br + Vector2D(-41*b,4*b)
+    val v2 = br + Vector2D(-42.5*b,6*b)
+    val v3 = br + Vector2D(-44*b,4*b)
+
+    val m1 = br + Vector2D(-42.5*b,4*b)
+    val m2 = br + Vector2D(-42.5*b,3*b)
+
+    val v4 = br + Vector2D(-41*b,3*b)
+    val v5 = br + Vector2D(-42.5*b,1*b)
+    val v6 = br + Vector2D(-44*b,3*b)
+    PolylineShape(v1,v2,v3,v1,m1,m2,v4,v5,v6,v4).setAttributes("Color" -> "#444444".color, "StrokeWidth" -> 0.1)
+  }
+
 }
 
