@@ -121,7 +121,18 @@ object PaperHeader {
     val title = Drawing.attributes.string("title").getOrElse("Anonymous drawing") +
                 Drawing.attributes.int("id").map(" #" +).getOrElse("")
 
-    TextShape(s"$title                 A4             Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(8 * b, -1.7 * b), b * 3,Attributes("TextAlignment" -> Vector2D(1, 1)))
+    //paper size
+    val size = {
+      val a = Siigna.double("printFormatMin").get.toInt
+      if(a == 296) "A3"
+      else if(a == 420) "A2"
+      else if(a == 593) "A1"
+      else if(a == 840) "A0"
+      else "A4"
+    }
+
+
+    TextShape(s"$title                 $size             Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(8 * b, -1.7 * b), b * 3,Attributes("TextAlignment" -> Vector2D(1, 1)))
   }
 
   // paper footer scale adjustment arrows
