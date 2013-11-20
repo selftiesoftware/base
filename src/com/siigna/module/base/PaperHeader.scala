@@ -31,7 +31,7 @@ object PaperHeader {
   private var cachedHeaderFrame = calculateHeaderFrame
   private var cachedOpenness = calculateOpenness
   private var cachedScaleText = calculateFooterText
-  private var cachedScaleArrows = calculateFooterArrows
+  //private var cachedScaleArrows = calculateFooterArrows
   private var cachedSizeArrows = calculatePaperArrows
 
   //send the functions to Drawing in mainline so that they are updated whenever an action is performed.
@@ -39,7 +39,7 @@ object PaperHeader {
     cachedHeaderFrame = calculateHeaderFrame
     cachedOpenness = calculateOpenness
     cachedScaleText = calculateFooterText
-    cachedScaleArrows = calculateFooterArrows
+    //cachedScaleArrows = calculateFooterArrows
     cachedSizeArrows = calculatePaperArrows
   })
 
@@ -65,7 +65,7 @@ object PaperHeader {
    * We use cachedScaleArrows because it is defined only when the addActionListener is active
    * @return a PolylineShape showing where to click to change drawing scale
    */
-  def scaleArrows = cachedScaleArrows
+  //def scaleArrows = cachedScaleArrows
 
   /**
    * We use cachedSizeArrows because it is defined only when the addActionListener is active
@@ -83,14 +83,14 @@ object PaperHeader {
     /*      tr
     *-----*
     |  p2 | ->  p2x = br.x + (bl.x - br.x)/2
-    |  *--p1 -> p1y = br.y + (tr.y - br.y)/2
+    |  *--p1 -> p1y = br.y + 20
     |  |  |
     *--p3-*
    bl     br
     */
 
     val p1x = br.x
-    val p1y = if(b.height<b.width) br.y + (tr.y - br.y)/30 else br.y + (tr.y - br.y)/45
+    val p1y = br.y + 8
     val p2x = if(b.height<b.width) br.x + (bl.x - br.x)/2 else br.x + (bl.x - br.x)/1.5
     val p2y = p1y
     val p3x = p2x
