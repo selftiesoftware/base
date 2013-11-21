@@ -31,16 +31,18 @@ object PaperHeader {
   private var cachedHeaderFrame = calculateHeaderFrame
   private var cachedOpenness = calculateOpenness
   private var cachedScaleText = calculateFooterText
-  //private var cachedScaleArrows = calculateFooterArrows
-  private var cachedSizeArrows = calculatePaperArrows
+  private var cachedScaleAuto = calculateScaleAuto
+  private var cachedSizeArrows = calculateSizeArrows
+  private var cachedTypeScale = calculateTypeScale
 
   //send the functions to Drawing in mainline so that they are updated whenever an action is performed.
   addActionListener((_, _) => {
     cachedHeaderFrame = calculateHeaderFrame
     cachedOpenness = calculateOpenness
     cachedScaleText = calculateFooterText
-    //cachedScaleArrows = calculateFooterArrows
-    cachedSizeArrows = calculatePaperArrows
+    cachedScaleAuto = calculateScaleAuto
+    cachedSizeArrows = calculateSizeArrows
+    cachedTypeScale = calculateTypeScale
   })
 
   /**
@@ -65,13 +67,19 @@ object PaperHeader {
    * We use cachedScaleArrows because it is defined only when the addActionListener is active
    * @return a PolylineShape showing where to click to change drawing scale
    */
-  //def scaleArrows = cachedScaleArrows
+  def scaleAuto = cachedScaleAuto
 
   /**
    * We use cachedSizeArrows because it is defined only when the addActionListener is active
    * @return a PolylineShape showing where to click to change the paper size
    */
   def sizeArrows = cachedSizeArrows
+
+  /**
+   * We use cachedTypeScale because it is defined only when the addActionListener is active
+   * @return a TextShape showing what is entered to change the paper scale
+   */
+  def TypeScale = cachedTypeScale
 
   //horizontal headerborder
   def calculateHeaderFrame = {
@@ -131,30 +139,11 @@ object PaperHeader {
       else "A4"
     }
 
-
     TextShape(s"$title                 $size             Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(8 * b, -1.7 * b), b * 3,Attributes("TextAlignment" -> Vector2D(1, 1)))
   }
 
-  // paper footer scale adjustment arrows
-  def calculateFooterArrows = {
-    val b = Drawing.boundaryScale
-    val br = Drawing.boundary.bottomRight
-
-    val v1 = br + Vector2D(-1*b,4*b)
-    val v2 = br + Vector2D(-2.5*b,6*b)
-    val v3 = br + Vector2D(-4*b,4*b)
-
-    val m1 = br + Vector2D(-2.5*b,4*b)
-    val m2 = br + Vector2D(-2.5*b,3*b)
-
-    val v4 = br + Vector2D(-1*b,3*b)
-    val v5 = br + Vector2D(-2.5*b,1*b)
-    val v6 = br + Vector2D(-4*b,3*b)
-    PolylineShape(v1,v2,v3,v1,m1,m2,v4,v5,v6,v4).setAttributes("Color" -> "#444444".color, "StrokeWidth" -> 0.1)
-  }
-
   // paper size adjustment arrows
-  def calculatePaperArrows = {
+  def calculateSizeArrows = {
     val b = Drawing.boundaryScale
     val br = Drawing.boundary.bottomRight
 
@@ -169,6 +158,34 @@ object PaperHeader {
     val v5 = br + Vector2D(-42.5*b,1*b)
     val v6 = br + Vector2D(-44*b,3*b)
     PolylineShape(v1,v2,v3,v1,m1,m2,v4,v5,v6,v4).setAttributes("Color" -> "#444444".color, "StrokeWidth" -> 0.1)
+  }
+
+  // clickable area for setting auto scaling of the paper
+  def calculateScaleAuto = {
+    val b = Drawing.boundaryScale
+    val br = Drawing.boundary.bottomRight
+
+    val v1 = br + Vector2D(-3*b,7*b)
+    val t = TextShape("A", v1,3).setAttributes("Color" -> "#BBBBBB".color)
+    t
+  }
+
+  // paper size adjustment arrows
+  def calculateTypeScale = {
+    val b = Drawing.boundaryScale
+    val br = Drawing.boundary.bottomRight
+
+    val v1 = br + Vector2D(-41*b,4*b)
+    val v2 = br + Vector2D(-42.5*b,6*b)
+    val v3 = br + Vector2D(-44*b,4*b)
+
+    val m1 = br + Vector2D(-42.5*b,4*b)
+    val m2 = br + Vector2D(-42.5*b,3*b)
+
+    val v4 = br + Vector2D(-41*b,3*b)
+    val v5 = br + Vector2D(-42.5*b,1*b)
+    val v6 = br + Vector2D(-44*b,3*b)
+    TextShape("SET SCALE HERE", br,12)
   }
 
 }
