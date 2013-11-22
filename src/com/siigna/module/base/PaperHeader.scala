@@ -86,7 +86,6 @@ object PaperHeader {
     val b = Drawing.boundary
     val br = b.bottomRight
     val bl = b.bottomLeft
-    val tr = b.topRight
 
     /*      tr
     *-----*
@@ -98,7 +97,7 @@ object PaperHeader {
     */
 
     val p1x = br.x
-    val p1y = br.y + 8
+    val p1y = br.y + (8 * Siigna.paperScale)
     val p2x = if(b.height<b.width) br.x + (bl.x - br.x)/2 else br.x + (bl.x - br.x)/1.5
     val p2y = p1y
     val p3x = p2x
@@ -144,7 +143,7 @@ object PaperHeader {
 
   // paper size adjustment arrows
   def calculateSizeArrows = {
-    val b = Drawing.boundaryScale
+    val b = Siigna.paperScale
     val br = Drawing.boundary.bottomRight
 
     val v1 = br + Vector2D(-41*b,4*b)
@@ -166,7 +165,7 @@ object PaperHeader {
     val br = Drawing.boundary.bottomRight
 
     val v1 = br + Vector2D(-3*b,7*b)
-    val t = TextShape("A", v1,3).setAttributes("Color" -> "#BBBBBB".color)
+    val t = TextShape("A", v1,3*b).setAttributes("Color" -> "#BBBBBB".color)
     t
   }
 
