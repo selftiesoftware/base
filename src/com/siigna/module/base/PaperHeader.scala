@@ -138,7 +138,7 @@ object PaperHeader {
       else "A4"
     }
 
-    TextShape(s"$title                 $size             Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(8 * b, -1.7 * b), b * 3,Attributes("TextAlignment" -> Vector2D(1, 1)))
+    TextShape(s"$title                 $size             Scale 1: $s", Drawing.boundary.bottomRight - Vector2D(8 * b, -2.5 * b), b * 3,Attributes("TextAlignment" -> Vector2D(1, 1)))
   }
 
   // paper size adjustment arrows
