@@ -146,7 +146,8 @@ trait MenuLogic {
       }
       case MouseUp(p,_,_) :: tail => {
         // if a shape is drawn, and you afterwards zoom very far out  - can be deleted afterwards
-        currentCategory = activeCategory
+        //there are no icons in the file menu, so it is disabled for now.
+        if(activeCategory.toString != "FileCategory") currentCategory = activeCategory
         Siigna.navigation = true
         if(currentCategory.toString == "FileCategory") {
           activeCategory = Menu.startCategory

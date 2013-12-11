@@ -98,7 +98,7 @@ class Menu extends Module with MenuLogic {
         }
         case EventW => {
           MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(attr)))
-          drawFillcircle(MenuIcons.EventIconFill, color, Vector2D(-radius,0))
+          //drawFillcircle(MenuIcons.EventIconFill, color, Vector2D(-radius,0))
         }
         //case EventC => {
         //  drawFill(MenuIcons.EventIconFill, color, eventT)
@@ -136,7 +136,7 @@ class Menu extends Module with MenuLogic {
           //eventText("Create",9)
         }
         case EventE => {
-          circleOutline(event)
+          //circleOutline(event)
           MenuIcons.fileIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(radius,0)))))
 
           //eventText("File",9)
