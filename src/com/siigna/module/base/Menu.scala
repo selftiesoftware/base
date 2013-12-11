@@ -74,10 +74,12 @@ class Menu extends Module with MenuLogic {
     //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
 
+      if(element == activeCategory) drawTooltip(element.toString.dropRight(8)+ " menu")
+
       val t = location concatenate TransformationMatrix(event.vector * radius / scale, 1)
 
       //color of the four circular Category buttons
-      val color = if(element == activeCategory) Color.white else new Color(250, 250, 250, 250)
+      val color = if(element == activeCategory) Color.white else new Color(247, 247, 247, 247)
 
       // Draw the Menu Category icons and white circular backgrounds.
       // If the event is the Center we should only transform to the location.
@@ -135,11 +137,14 @@ class Menu extends Module with MenuLogic {
         }
         case EventE => {
           circleOutline(event)
-          eventText("File",9)
+          MenuIcons.fileIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(radius,0)))))
+
+          //eventText("File",9)
         }
         case EventS => {
           circleOutline(event)
-          eventText("Edit",9)
+          MenuIcons.editIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(0,-radius)))))
+          //eventText("Edit",9)
         }
         case EventW => {
           circleOutline(event)
@@ -198,7 +203,7 @@ class Menu extends Module with MenuLogic {
 
     // Finally draw the active selection
     def drawTooltip(text : String) {
-      g draw TextShape(text, Vector2D(center.x, center.y + peripheryWidth * 2), 10,
+      g draw TextShape(text, Vector2D(center.x, center.y - peripheryWidth * 2), 10,
         Attributes("TextAlignment" -> Vector2D(0.5, 0.5)))
     }
 

@@ -55,7 +55,14 @@ object MenuIcons {
   val rulerOutline = PolylineShape(V(10.0,9.0), V(-9.0,-14.0), V(-14.0,-10.0), V(5.0,14.0), V(10.0,9.0)).addAttributes("StrokeWidth" -> 0.4)
   val helpersIcon = T(rulerOutline, L(V(-10.0,-8.0), V(-8.0,-11.0)),L(V(-7.0,-7.0), V(-5.0,-8.0)),L(V(-6.0,-3.0), V(-3.0,-5.0)),L(V(-2.0,-1.0), V(-1.0,-2.0)),L(V(-2.0,2.0), V(0.0,0.0)),L(V(1.0,3.0), V(2.0,2.0)),L(V(2.0,7.0), V(5.0,5.0)),L(V(5.0,9.0), V(7.0,8.0)))
 
+  //Edit Category icon
+  val editOutline = PolylineShape(V(15.0,4.0), V(8.0,-5.0), V(5.0,-3.0), V(2.0,-14.0), V(13.0,-9.0), V(10.0,-7.0), V(17.0,3.0), V(15.0,4.0))
+  val cir = CircleShape(V(2,-14),1.5).addAttributes("StrokeWidth" -> 0.9)
+  val editIcon = T(editOutline, cir, L(V(2.0,-14.0), V(-9.0,14.0)).addAttributes("StrokeWidth" -> 0.4),L(V(-9.0,10.0), V(-9.0,14.0)),L(V(-9.0,2.0), V(-9.0,6.0)),L(V(-9.0,-6.0), V(-9.0,-1.0)),L(V(-9.0,-14.0), V(-9.0,-10.0)))
 
+  //File Category icon
+  val fileOutline = PolylineShape(V(-6.0,13.0), V(12.0,8.0), V(16.0,-6.0), V(-6.0,-4.0), V(-10.0,15.0), V(-13.0,14.0), V(-15.0,-14.0), V(-6.0,-14.0), V(-2.0,-10.0), V(11.0,-10.0), V(11.0,-8.0)).addAttributes("StrokeWidth" -> 0.4)
+  val fileIcon = T(fileOutline,L(V(9.0,-8.0), V(-11.0,-7.0)),L(V(-11.0,-7.0),V(-12.0,12.0)))
 
   val C, E, N, W, S = T(Q(V(0, 0), 26))
 
