@@ -39,7 +39,8 @@ class Menu extends Module with MenuLogic {
     // so we need to adjust the zoom if the radius changes
     val scale = radius / 130.0
     val location = TransformationMatrix(center, scale).flipY
-    val colorAttr = "Color" -> new Color(150, 150, 150, 150)
+    val attr = "Color" -> new Color(160, 160, 160, 160)
+    val colorAttr = "Color" -> new Color(60, 60, 60, 60)
 
     // Draws a fill shape
     def drawFill (fillShape: Array[Vector2D], color : Color, transformation : TransformationMatrix) {
@@ -48,6 +49,13 @@ class Menu extends Module with MenuLogic {
       val fillScreenY = fillVector2Ds.map(_.y.toInt).toArray
       g setColor color
       g.AWTGraphics.fillPolygon(fillScreenX,fillScreenY, fillVector2Ds.size)
+    }
+
+    // Draws a filled circle
+    def drawFillcircle (r : Int, color : Color, offsetVector : Vector2D) {
+      g setColor color
+      val c = center - Vector2D(25,25) + offsetVector
+      g.AWTGraphics.fillOval(c.x.toInt,c.y.toInt,r,r)
     }
 
     def drawBackground(event : MenuEvent, element : MenuElement) {
@@ -67,27 +75,28 @@ class Menu extends Module with MenuLogic {
     def drawElement(event: MenuEvent, element: MenuElement) {
 
       val t = location concatenate TransformationMatrix(event.vector * radius / scale, 1)
-      val eventT = location concatenate TransformationMatrix((event.vector * radius - Vector2D(0,radius)) / scale, 1)
-      val color = if(element == activeCategory) Color.white else MenuIcons.eventColor
+
+      //color of the four circular Category buttons
+      val color = if(element == activeCategory) Color.white else new Color(250, 250, 250, 250)
 
       // Draw the Menu Category icons and white circular backgrounds.
       // If the event is the Center we should only transform to the location.
       event match {
         case EventN => {
-          drawFill(MenuIcons.EventIconFill, color, eventT)
-          MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+          MenuIcons.NOutline.foreach(s => g.draw(s.transform(location).addAttributes(attr)))
+          drawFillcircle(MenuIcons.EventIconFill, color, Vector2D(0,-radius))
         }
         case EventE => {
-          drawFill(MenuIcons.EventIconFill, color, eventT)
-          MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+          MenuIcons.EOutline.foreach(s => g.draw(s.transform(location).addAttributes(attr)))
+          drawFillcircle(MenuIcons.EventIconFill, color, Vector2D(radius,0))
         }
         case EventS => {
-          drawFill(MenuIcons.EventIconFill, color, eventT)
-          MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+          MenuIcons.SOutline.foreach(s => g.draw(s.transform(location).addAttributes(attr)))
+          drawFillcircle(MenuIcons.EventIconFill, color, Vector2D(0,radius))
         }
         case EventW => {
-          drawFill(MenuIcons.EventIconFill, color, eventT)
-          MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(colorAttr)))
+          MenuIcons.WOutline.foreach(s => g.draw(s.transform(location).addAttributes(attr)))
+          drawFillcircle(MenuIcons.EventIconFill, color, Vector2D(-radius,0))
         }
         //case EventC => {
         //  drawFill(MenuIcons.EventIconFill, color, eventT)
@@ -113,14 +122,16 @@ class Menu extends Module with MenuLogic {
       def eventText(text : String, size : Int) {
         g.draw(TextShape(text,position - (event.vector * radius),size))
       }
+      //draw a line around the four circular category icons
       def circleOutline(e : MenuEvent) {
-        g.draw(CircleShape(center,peripheryWidth).transform(TransformationMatrix(- e.vector * radius, 1)).addAttributes(colorAttr))
+        g.draw(CircleShape(center,25).transform(TransformationMatrix(- e.vector * radius, 1)).addAttributes("color" -> new Color(30, 30, 30, 30)))
       }
 
       event match {
         case EventN => {
           circleOutline(event)
-          eventText("Create",9)
+          MenuIcons.createIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(0,radius)))))
+          //eventText("Create",9)
         }
         case EventE => {
           circleOutline(event)
@@ -132,7 +143,8 @@ class Menu extends Module with MenuLogic {
         }
         case EventW => {
           circleOutline(event)
-          eventText("Helpers",9)
+          MenuIcons.helpersIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(-radius,0)))))
+          //eventText("Helpers",9)
         }
         //case EventC => {
         //  eventText("File",12)
@@ -179,7 +191,7 @@ class Menu extends Module with MenuLogic {
     if (!currentCategory.graph.contains(EventC) && currentCategory.parent.isDefined) {
       val parent = currentCategory.parent.get
       val color = if (parent == activeCategory) parent.color.brighter() else parent.color
-      drawFill(MenuIcons.EventIconFill, color, location.translate(Vector2D(0, -radius)))
+      drawFillcircle(MenuIcons.EventIconFill, color,Vector2D(0,0))
       g.draw(CircleShape(center, peripheryWidth).addAttributes(colorAttr))
       g.draw(TextShape("back", Vector2D(center.x -15, center.y -6), 12))
     }

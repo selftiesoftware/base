@@ -20,6 +20,8 @@
 package com.siigna.module.base.radialmenu
 
 import com.siigna._
+import app.model.shape.PolylineLineShape
+import app.model.shape.PolylineShape.{PolylineShapeClosed, PolylineShapeOpen}
 import java.awt.Color
 
 /**
@@ -39,12 +41,22 @@ object MenuIcons {
   val fileColor       = new Color(0.40f, 0.40f, 0.40f, 0.15f)
   val eventColor      = new Color(0.95f, 0.95f, 0.95f, 0.80f)
   val helpersColor    = new Color(0.65f, 0.80f, 0.25f, 0.30f)
-  val itemColor       = new Color(0.95f, 0.95f, 0.95f, 0.55f)
+  val itemColor       = new Color(0.95f, 0.95f, 0.95f, 0.75f)
   val highlightIcon   = new Color(1.00f, 1.00f, 1.00f, 1.00f)
   val editColor     = new Color(0.55f, 0.65f, 0.80f, 0.30f)
   val propertiesColor = new Color(0.80f, 0.45f, 0.65f, 0.18f)
 
-  // Category-shapes
+
+  // Create Category icon
+  val pencilOutline = PolylineShape(V(-1.0,11.0), V(-18.0,-10.0), V(-14.0,-14.0), V(3.0,7.0), V(4.0,13.0), V(-1.0,11.0),V(-1.0,11.0)).addAttributes("StrokeWidth" -> 0.4)
+  val createIcon = T(pencilOutline,PolylineShape(V(7.0,13.0), V(16.0,13.0), V(16.0,-15.0)), L(V(0.0,9.0), V(-16.0,-11.0)))
+
+  // Helpers Category icon
+  val rulerOutline = PolylineShape(V(10.0,9.0), V(-9.0,-14.0), V(-14.0,-10.0), V(5.0,14.0), V(10.0,9.0)).addAttributes("StrokeWidth" -> 0.4)
+  val helpersIcon = T(rulerOutline, L(V(-10.0,-8.0), V(-8.0,-11.0)),L(V(-7.0,-7.0), V(-5.0,-8.0)),L(V(-6.0,-3.0), V(-3.0,-5.0)),L(V(-2.0,-1.0), V(-1.0,-2.0)),L(V(-2.0,2.0), V(0.0,0.0)),L(V(1.0,3.0), V(2.0,2.0)),L(V(2.0,7.0), V(5.0,5.0)),L(V(5.0,9.0), V(7.0,8.0)))
+
+
+
   val C, E, N, W, S = T(Q(V(0, 0), 26))
 
   val ENE = T(A(V(-24,3.7),V(-16,-8.9),V(-8.8,-23)),A(V(-8.8,-23),V(-6.2,-25),V(-2.5,-25)),A(V(-23.4,10.6),V(-25,7.3),V(-24,3.7)),A(V(-3.1,27),V(0.51,28),V(3.8,26)),A(V(3.8,26),V(15.5,9.1),V(25,-9.8)),A(V(25,-9.8),V(24.7,-13.6),V(22,-16)),L(V(-3.1,27),V(-23.4,10.6)),L(V(22,-16),V(-2.5,-25)))
@@ -137,7 +149,10 @@ object MenuIcons {
 
   // Fillings
   val IconFill = Array(V(3.918,-25.88),V(2.438,-27.13),V(0.5904,-27.72),V(-1.342,-27.55),V(-3.062,-26.66),V(-23.34,-10.36),V(-24.57,-8.888),V(-25.15,-7.057),V(-25,-5.142),V(-24.12,-3.432),V(-19.6,2.705),V(-15.51,9.136),V(-11.87,15.83),V(-8.692,22.76),V(-7.651,24.32),V(-6.101,25.39),V(-4.267,25.8),V(-2.412,25.5),V(22.01,16.49),V(23.69,15.45),V(24.83,13.84),V(25.25,11.91),V(24.88,9.974),V(20.6,0.4781),V(15.67,-8.692),V(10.1,-17.49))
-  //large category background
+
+  //large category background (the rounding polygonal backgrounds for the tool buttons)
   val CategoryFill = Array(V(-72.27,80.26),V(-55.86,92.43),V(-37.46,101.3),V(-17.71,106.5),V(-9.357,102.1),V(0,100.5),V(9.357,102.1),V(17.71,106.5),V(37.46,101.3),V(55.86,92.43),V(72.27,80.26),V(101,112.2),V(83.33,125.9),V(63.79,136.9),V(42.85,144.8),V(20.96,149.5),V(11.4,156.2),V(0,158.5),V(-11.4,156.2),V(-20.96,149.5),V(-42.85,144.8),V(-63.79,136.9),V(-83.33,125.9),V(-101,112.2))
-  val EventIconFill = Array(V(-10.53,153.1),V(-19.24,146.8),V(-24.62,137.5),V(-25.74,126.8),V(-22.42,116.6),V(-15.21,108.6),V(-5.382,104.2),V(5.382,104.2),V(15.21,108.6),V(22.42,116.6),V(25.74,126.8),V(24.62,137.5),V(19.24,146.8),V(10.53,153.1),V(0,155.4))
+
+  //radius of the white circular fill color behind the icon in the four category buttons (Create, Helpers, Edit, File)
+  val EventIconFill = 50
 }
