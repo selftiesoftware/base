@@ -20,9 +20,9 @@
 package com.siigna.module.base.radialmenu
 
 import com.siigna._
-import app.model.shape.PolylineLineShape
-import app.model.shape.PolylineShape.{PolylineShapeClosed, PolylineShapeOpen}
 import java.awt.Color
+import util.collection.Attributes
+import com.siigna.Vector2D
 
 /**
  * Contains a number of icons represented as an array of [[com.siigna.app.model.shape.Shape]]s that can be
@@ -48,8 +48,8 @@ object MenuIcons {
 
 
   // Create Category icon
-  val pencilOutline = PolylineShape(V(-1.0,11.0), V(-18.0,-10.0), V(-14.0,-14.0), V(3.0,7.0), V(4.0,13.0), V(-1.0,11.0),V(-1.0,11.0)).addAttributes("StrokeWidth" -> 0.4)
-  val createIcon = T(pencilOutline,PolylineShape(V(7.0,13.0), V(16.0,13.0), V(16.0,-15.0)), L(V(0.0,9.0), V(-16.0,-11.0)))
+  val pencilOutline = PolylineShape(V(-1.0,11.0), V(-18.0,-10.0), V(-14.0,-14.0), V(3.0,7.0), V(4.0,13.0), V(-1.0,11.0),V(-1.0,11.0))
+  val createIcon = T(pencilOutline,PolylineShape(V(7.0,13.0), V(16.0,13.0), V(16.0,-15.0)).addAttributes("StrokeWidth" -> 0.4), L(V(0.0,9.0), V(-16.0,-11.0)))
 
   // Helpers Category icon
   val rulerOutline = PolylineShape(V(10.0,9.0), V(-9.0,-14.0), V(-14.0,-10.0), V(5.0,14.0), V(10.0,9.0)).addAttributes("StrokeWidth" -> 0.4)
@@ -59,6 +59,11 @@ object MenuIcons {
   val editOutline = PolylineShape(V(15.0,4.0), V(8.0,-5.0), V(5.0,-3.0), V(2.0,-14.0), V(13.0,-9.0), V(10.0,-7.0), V(17.0,3.0), V(15.0,4.0))
   val cir = CircleShape(V(2,-14),1.5).addAttributes("StrokeWidth" -> 0.9)
   val editIcon = T(editOutline, cir, L(V(2.0,-14.0), V(-9.0,14.0)).addAttributes("StrokeWidth" -> 0.4),L(V(-9.0,10.0), V(-9.0,14.0)),L(V(-9.0,2.0), V(-9.0,6.0)),L(V(-9.0,-6.0), V(-9.0,-1.0)),L(V(-9.0,-14.0), V(-9.0,-10.0)))
+
+  //Transform submenu icon
+  val transformIcon = Iterable(TextShape("trans-", Vector2D(0, -6), 10, Attributes("TextAlignment" -> Vector2D(0.5, 0.5))),
+                               TextShape("form", Vector2D(0, 6), 10, Attributes("TextAlignment" -> Vector2D(0.5, 0.5)))
+                              )
 
   //File Category icon
   val fileOutline = PolylineShape(V(-6.0,13.0), V(12.0,8.0), V(16.0,-6.0), V(-6.0,-4.0), V(-10.0,15.0), V(-13.0,14.0), V(-15.0,-14.0), V(-6.0,-14.0), V(-2.0,-10.0), V(11.0,-10.0), V(11.0,-8.0)).addAttributes("StrokeWidth" -> 0.4)

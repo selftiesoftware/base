@@ -61,7 +61,11 @@ class Menu extends Module with MenuLogic {
     def drawBackground(event : MenuEvent, element : MenuElement) {
       //draw the background colors)
       event match {
-        case EventN => drawFill(MenuIcons.CategoryFill,  MenuIcons.createColor, location.rotate(360))
+        case EventN => {
+          //if sub-menus are needed: use currentCategory as a pointer to see if the event icons color should change.
+          if(currentCategory.toString == "EditCategory") drawFill(MenuIcons.CategoryFill,  MenuIcons.editColor, location.rotate(360))
+          else drawFill(MenuIcons.CategoryFill,  MenuIcons.createColor, location.rotate(360))
+        }
         case EventE => drawFill(MenuIcons.CategoryFill,  MenuIcons.propertiesColor, location.rotate(90))
         case EventS => drawFill(MenuIcons.CategoryFill,  MenuIcons.editColor, location.rotate(180))
         case EventW => drawFill(MenuIcons.CategoryFill,  MenuIcons.helpersColor, location.rotate(270))
@@ -132,11 +136,13 @@ class Menu extends Module with MenuLogic {
       event match {
         case EventN => {
           circleOutline(event)
-          MenuIcons.createIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(0,radius)))))
+          if(currentCategory.toString == "EditCategory") MenuIcons.transformIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(0,radius)))))
+
+          else MenuIcons.createIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(0,radius)))))
           //eventText("Create",9)
         }
         case EventE => {
-          //circleOutline(event)
+          //circleOutline(event) <- no sub menu
           MenuIcons.fileIcon.foreach(s => g.draw(s.transform(TransformationMatrix(center - Vector2D(radius,0)))))
 
           //eventText("File",9)
