@@ -214,7 +214,7 @@ class Menu extends Module with MenuLogic {
     }
 
     activeDirection match {
-      case Some(module : MenuModule) => if (module.instance.isDefined) drawTooltip(module.instance.get.toString)
+      case Some(module : MenuModule) => if (module.instance.isDefined) drawTooltip(module.instance.get.toString.substring(0,module.instance.get.toString.length-4))
       case _ =>
     }} catch {
       case _ : Throwable =>
