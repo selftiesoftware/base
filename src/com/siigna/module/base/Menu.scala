@@ -78,7 +78,7 @@ class Menu extends Module with MenuLogic {
     //a function to draw ICONS and ICON OUTLINES / BACKGROUNDS
     def drawElement(event: MenuEvent, element: MenuElement) {
 
-      if(element == activeCategory) drawTooltip(element.toString.dropRight(8)+ " menu")
+      if(element == activeCategory) drawTooltip(element.toString.dropRight(8))
 
       val t = location concatenate TransformationMatrix(event.vector * radius / scale, 1)
 
@@ -214,7 +214,7 @@ class Menu extends Module with MenuLogic {
     }
 
     activeDirection match {
-      case Some(module : MenuModule) => if (module.instance.isDefined) drawTooltip(module.instance.get.toString.substring(0,module.instance.get.toString.length-4))
+      case Some(module : MenuModule) => if (module.instance.isDefined) drawTooltip(module.instance.get.toString)
       case _ =>
     }} catch {
       case _ : Throwable =>
